@@ -52,106 +52,106 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package uk.bl.dpt.qa.drmlint.wrappers;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jhove2.config.spring.SpringConfigInfo;
-import org.jhove2.core.JHOVE2;
-import org.jhove2.core.JHOVE2Exception;
-import org.jhove2.core.io.Input;
-import org.jhove2.core.source.Source;
-import org.jhove2.module.display.Displayer;
-import org.jhove2.module.display.XMLDisplayer;
-import org.jhove2.persist.inmemory.InMemoryFrameworkAccessor;
-import org.jhove2.persist.inmemory.InMemorySourceFactory;
-
-/**
- * This class wraps and hides Jhove2 - a call to isValid() will return true or false if
- * Jhove2 thinks the file is valid or not
- * @author wpalmer
- *
- */
-public class Jhove2Wrapper {
-
-	private static JHOVE2 jhove2 = null;
-	
-	private Jhove2Wrapper() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	private static void initJhove2() {
-		try {
-
-			jhove2 = new JHOVE2();
-			
-			jhove2.setSourceFactory(new InMemorySourceFactory());
-			jhove2.setModuleAccessor(new InMemoryFrameworkAccessor());
-			jhove2.setConfigInfo(new SpringConfigInfo());
-			
-
-		} catch (JHOVE2Exception e) {
-			System.err.println("message: "+e.getMessage());
-			e.printStackTrace(System.err);
-		}
-
-	}
-
-	/**
-	 * Queries Jhove2 to see whether a file is valid/well-formed or not
-	 * This method is variously inspired by the Jhove2 sources, tests and javadocs
-	 * @param pFile file to check
-	 * @return true/false if Jhove2 thinks it's valid
-	 */
-	public static boolean isValid(File pFile) {
-		if(null==jhove2) initJhove2();
-
-		boolean ret = false;
-		
-		try {
-
-			List<String> names = new ArrayList<String>();
-			names.add(pFile.getAbsolutePath());
-			
-			// Create a FileSet source unit
-			Source source = jhove2.getSourceFactory().getSource(jhove2, names);
-			source.addModule(jhove2);
-			
-			/* Characterize the FileSet source unit (and all subsidiary
-			 * source units that it encapsulates.
-			 */                     
-			Input input = source.getInput(jhove2);
-			
-			Displayer displayer = new XMLDisplayer(jhove2.getModuleAccessor());
-			displayer.setConfigInfo(jhove2.getConfigInfo());
-			
-			try {
-				source = jhove2.characterize(source, input);
-				//System.out.println(source.getReportableName()+" "+source.getReportableIdentifier());
-
-				displayer.display(source);
-
-				//TODO: do something with the characterize outputs??
-				
-			}
-			finally {
-				if (input != null) {
-					input.close();
-				}
-			}                       
-
-		} catch (IOException e) {
-			e.printStackTrace(System.err);
-		} catch (JHOVE2Exception e) {
-			System.err.println("message: "+e.getMessage());
-			e.printStackTrace(System.err);
-		}
-
-		return ret;
-	}
-	
-
-}
+//package uk.bl.dpt.qa.drmlint.wrappers;
+//
+//import java.io.File;
+//import java.io.IOException;
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//import org.jhove2.config.spring.SpringConfigInfo;
+//import org.jhove2.core.JHOVE2;
+//import org.jhove2.core.JHOVE2Exception;
+//import org.jhove2.core.io.Input;
+//import org.jhove2.core.source.Source;
+//import org.jhove2.module.display.Displayer;
+//import org.jhove2.module.display.XMLDisplayer;
+//import org.jhove2.persist.inmemory.InMemoryFrameworkAccessor;
+//import org.jhove2.persist.inmemory.InMemorySourceFactory;
+//
+///**
+// * This class wraps and hides Jhove2 - a call to isValid() will return true or false if
+// * Jhove2 thinks the file is valid or not
+// * @author wpalmer
+// *
+// */
+//public class Jhove2Wrapper {
+//
+//	private static JHOVE2 jhove2 = null;
+//	
+//	private Jhove2Wrapper() {
+//		// TODO Auto-generated constructor stub
+//	}
+//	
+//	private static void initJhove2() {
+//		try {
+//
+//			jhove2 = new JHOVE2();
+//			
+//			jhove2.setSourceFactory(new InMemorySourceFactory());
+//			jhove2.setModuleAccessor(new InMemoryFrameworkAccessor());
+//			jhove2.setConfigInfo(new SpringConfigInfo());
+//			
+//
+//		} catch (JHOVE2Exception e) {
+//			System.err.println("message: "+e.getMessage());
+//			e.printStackTrace(System.err);
+//		}
+//
+//	}
+//
+//	/**
+//	 * Queries Jhove2 to see whether a file is valid/well-formed or not
+//	 * This method is variously inspired by the Jhove2 sources, tests and javadocs
+//	 * @param pFile file to check
+//	 * @return true/false if Jhove2 thinks it's valid
+//	 */
+//	public static boolean isValid(File pFile) {
+//		if(null==jhove2) initJhove2();
+//
+//		boolean ret = false;
+//		
+//		try {
+//
+//			List<String> names = new ArrayList<String>();
+//			names.add(pFile.getAbsolutePath());
+//			
+//			// Create a FileSet source unit
+//			Source source = jhove2.getSourceFactory().getSource(jhove2, names);
+//			source.addModule(jhove2);
+//			
+//			/* Characterize the FileSet source unit (and all subsidiary
+//			 * source units that it encapsulates.
+//			 */                     
+//			Input input = source.getInput(jhove2);
+//			
+//			Displayer displayer = new XMLDisplayer(jhove2.getModuleAccessor());
+//			displayer.setConfigInfo(jhove2.getConfigInfo());
+//			
+//			try {
+//				source = jhove2.characterize(source, input);
+//				//System.out.println(source.getReportableName()+" "+source.getReportableIdentifier());
+//
+//				displayer.display(source);
+//
+//				//TODO: do something with the characterize outputs??
+//				
+//			}
+//			finally {
+//				if (input != null) {
+//					input.close();
+//				}
+//			}                       
+//
+//		} catch (IOException e) {
+//			e.printStackTrace(System.err);
+//		} catch (JHOVE2Exception e) {
+//			System.err.println("message: "+e.getMessage());
+//			e.printStackTrace(System.err);
+//		}
+//
+//		return ret;
+//	}
+//	
+//
+//}

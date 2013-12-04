@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 
 import uk.bl.dpt.qa.drmlint.wrappers.CalibreWrapper;
 import uk.bl.dpt.qa.drmlint.wrappers.Jhove1Wrapper;
-import uk.bl.dpt.qa.drmlint.wrappers.Jhove2Wrapper;
+//import uk.bl.dpt.qa.drmlint.wrappers.Jhove2Wrapper;
 import uk.bl.dpt.qa.drmlint.wrappers.PDFBoxWrapper;
 import uk.bl.dpt.qa.drmlint.wrappers.iTextWrapper;
 
@@ -145,11 +145,11 @@ public class PDFFormat implements Format {
 	}
 
 	@SuppressWarnings("unused")
-	private boolean isValidJhove2(File pFile) {
-		boolean ret = false;
-		ret = Jhove2Wrapper.isValid(pFile);
-		return ret;
-	}	
+//	private boolean isValidJhove2(File pFile) {
+//		boolean ret = false;
+//		ret = Jhove2Wrapper.isValid(pFile);
+//		return ret;
+//	}	
 	
 	/**
 	 * Search for /encrypt in file 

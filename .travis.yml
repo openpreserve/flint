@@ -3,3 +3,8 @@ jdk:
   - oraclejdk7
   - openjdk6
   - openjdk7
+before_install:
+  - git clone https://github.com/openplanets/jhove.git
+  - cd jhove/jhove-releases
+  - mvn clean install -DskipTests=true
+  - cd ../..

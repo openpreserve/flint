@@ -48,11 +48,13 @@
 		</dependency>
 		<!-- note that to use jhove2 a different method of making a single jar 
 			is required, or just use the standalone jar and dependencies -->
+		<!--
 		<dependency>
 			<groupId>org.jhove2</groupId>
 			<artifactId>jhove2</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+		-->
 		<!-- Note that iText is licensed under AGPL3 -->
 		<dependency>
 			<groupId>com.itextpdf</groupId>
