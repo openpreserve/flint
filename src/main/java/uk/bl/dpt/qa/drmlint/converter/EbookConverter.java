@@ -114,16 +114,4 @@ public class EbookConverter {
 		return verified;
 	}
 	
-	/**
-	 * Test main method
-	 * @param args command line arguments
-	 */
-	public static void main(String[] args) {
-		File oldEbook = new File("test.mobi");
-		File newEbook = convertToEpub(oldEbook);
-		boolean verified = verifyMigration(oldEbook, newEbook);
-		System.out.println("Verified: "+verified);
-		
-	}
-
 }

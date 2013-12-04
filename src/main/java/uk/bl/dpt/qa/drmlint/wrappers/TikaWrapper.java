@@ -14,19 +14,26 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package uk.bl.dpt.qa.drmlint;
+package uk.bl.dpt.qa.drmlint.wrappers;
 
 import java.io.File;
-import uk.bl.dpt.qa.drmlint.wrappers.TikaWrapper;
+import java.io.IOException;
+
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 
 /**
- * This class uses Apache Tika to detect the mimetype of a file
+ * A class to wrap Apache Tika
  * @author wpalmer
  *
  */
-public class FormatDetector {
+public class TikaWrapper {
+
+	private static final DefaultDetector detector = new DefaultDetector();
 	
-	private FormatDetector() {
+	private TikaWrapper() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -36,7 +43,19 @@ public class FormatDetector {
 	 * @return the mimetype of the file
 	 */
 	public static String getMimetype(File pFile) {
-		return TikaWrapper.getMimetype(pFile);
-	}
+		
+		String type = null;
 
+		try {
+			TikaInputStream tis = TikaInputStream.get(pFile);
+			MediaType mt = detector.detect(tis, new Metadata());
+			type = mt.toString();//e.g. "image/tiff"
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return type;
+	}
+	
 }

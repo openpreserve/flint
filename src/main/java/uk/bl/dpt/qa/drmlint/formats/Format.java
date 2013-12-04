@@ -17,6 +17,7 @@
 package uk.bl.dpt.qa.drmlint.formats;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * This interface defines an object that can check a particular file format for DRM and validity
@@ -33,7 +34,7 @@ public interface Format {
 	 * @param pFile file to check
 	 * @return whether or not the file contains DRM
 	 */
-	public boolean containsDRM(File pFile);
+	public Map<String, Boolean> containsDRM(File pFile);
 
 	/**
 	 * Can this Format object check this file?
@@ -48,7 +49,7 @@ public interface Format {
 	 * @param pFile file to check
 	 * @return whether or not this file is a valid/well-formed instance of this format
 	 */
-	public boolean isValid(File pFile);
+	public Map<String, Boolean> isValid(File pFile);
 	
 	/**
 	 * Get the name of this Format object

@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.bl.dpt.qa.drmlint.ToolRunner;
-import uk.bl.dpt.qa.drmlint.formats.EPUBFormat;
 
 /**
  * Wrapper for Calibre - note that there are no static methods here (yet?)
@@ -172,26 +171,34 @@ public class CalibreWrapper {
 		
 		return ret;
 	}
-
+	
 	/**
-	 * Main method
-	 * @param args command line arguments
+	 * Extracts text from a PDF
+	 * @param pFile input file
+	 * @param pOutput output file
+	 * @param pOverwrite whether or not to overwrite an existing output file
+	 * @return true if converted ok, otherwise false
 	 */
-	public static void main(String[] args) {
-		
-		System.out.println("Version: "+CalibreWrapper.getVersion());
-		File testFile = new File("test.epub");
-		boolean valid = CalibreWrapper.isValid(testFile);
-		System.out.println("Valid: "+valid);
-		File newFile = CalibreWrapper.convertEbook(testFile, "epub");
-		if(newFile!=null) {
-		System.out.println("Converted file: "+newFile.getAbsolutePath()+", size: "+newFile.length());
-		valid = new EPUBFormat(null).isValid(newFile);
-		System.out.println("Valid: "+valid);
-		valid = CalibreWrapper.isValid(newFile);
-		System.out.println("Valid: "+valid);
+	public static boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) {
+		if(pOutput.exists()&(!pOverwrite)) return false;
+		//calibre uses the target file extension to decide how to convert the file
+		//as we want text, only allow that extension
+		if(!pOutput.getName().toLowerCase().endsWith(".txt")) return false;
+		if(null==CALIBRE_CONVERT) setupCalibre();
+		//we need to redirect stderr to stdout otherwise bad things happen if drm is detected and stderr is written to first
+		ToolRunner runner = new ToolRunner(true);
+		try {
+			List<String> commandLine = new ArrayList<String>();
+			commandLine.addAll(CALIBRE_CONVERT);
+			commandLine.add(pFile.getAbsolutePath());
+			commandLine.add(pOutput.getAbsolutePath());
+			int exitCode = runner.runCommand(commandLine);
+			if(exitCode!=0) return false;
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
+		return false;
 	}
 	
 }

@@ -17,9 +17,12 @@
 package uk.bl.dpt.qa.drmlint;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,26 +64,69 @@ public class ToolRunner {
 		while(pCommandLine.contains("")) {
 			pCommandLine.remove("");
 		}
-		
-		ProcessBuilder pb = new ProcessBuilder(pCommandLine);
-		pb.redirectErrorStream(gRedirectStderr);
-		//set the working directory to our temporary directory
-		//pb.directory(new File(gTempDir));
 
+		ArrayList<String> commandLine = new ArrayList<String>();
+		commandLine.addAll(pCommandLine);
+		//this simulates EOF, apparently
+		//if(windows)
+		//commandLine.add("<NUL");
+
+		ProcessBuilder pb = new ProcessBuilder(commandLine);
+		//don't redirect stderr to stdout as our output XML is in stdout
+		if(gRedirectStderr) {
+			pb.redirectErrorStream(gRedirectStderr);
+		}
+		
+		//force this setting in JDK6
+		//pb.redirectErrorStream(true);
+		
+/* JDK7+ only
 		//log outputs to file(s) - fixes hangs on windows
 		//and logs *all* output (unlike when using IOStreamThread)
 		File stdoutFile = File.createTempFile("stdout-log-", ".log");
 		stdoutFile.deleteOnExit();
 		File stderrFile = File.createTempFile("stderr-log-", ".log");
 		stderrFile.deleteOnExit();
+	
 		pb.redirectOutput(stdoutFile);
 		if(!gRedirectStderr) {
 			pb.redirectError(stderrFile);
 		}
-		
+ */
+
 		//start the executable
 		Process proc = pb.start();
-
+		//create a log of the console output
+		InputStream stdout = proc.getInputStream();
+		InputStream stderr = proc.getErrorStream();
+		ByteArrayOutputStream byteArrayStdout = new ByteArrayOutputStream();
+		ByteArrayOutputStream byteArrayStderr = new ByteArrayOutputStream();
+		gStdout = new BufferedReader(new InputStreamReader(stdout));
+		if(!gRedirectStderr) {
+			gStderr = new BufferedReader(new InputStreamReader(stdout));
+		} else {
+			gStderr = null;
+		}
+		// consume buffers
+		// use the fact that exitvalue will throw an exception if the process is still running to drain the buffer
+		while(true) {
+			try {
+				proc.exitValue();
+			} catch(IllegalThreadStateException e) {
+				byteArrayStdout.write(stdout.read());
+				byteArrayStderr.write(stderr.read());
+				continue;
+			}
+			break;
+		}
+		
+		//reconstruct a buffer
+		byteArrayStdout.close();
+		gStdout = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(byteArrayStdout.toByteArray())));
+		if(!gRedirectStderr) {
+			byteArrayStderr.close();
+			gStderr = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(byteArrayStderr.toByteArray())));
+		}
 		try {
 			//wait for process to end before continuing
 			proc.waitFor();
@@ -88,11 +134,6 @@ public class ToolRunner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-		
-		//create a log of the console output
-		gStdout = new BufferedReader(new FileReader(stdoutFile));
-		gStderr = new BufferedReader(new FileReader(stderrFile));
-		
 		return proc.exitValue();
 	}
 	

@@ -18,6 +18,8 @@ package uk.bl.dpt.qa.drmlint.formats;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -28,18 +30,16 @@ import uk.bl.dpt.qa.drmlint.wrappers.CalibreWrapper;
 import uk.bl.dpt.qa.drmlint.wrappers.EpubCheckWrapper;
 
 /**
- * EPUB Format checker
  * @author wpalmer
  *
  */
 public class EPUBFormat implements Format {
 
-	@SuppressWarnings("unused")
 	private static Logger gLogger = null;
 	
 	/**
-	 * Create a new EPUBFormat object
-	 * @param pLogger logger object
+	 * Create a new EPUBFormat object to check epub files
+	 * @param pLogger Logger to use
 	 */
 	public EPUBFormat(Logger pLogger) {
 		gLogger = pLogger;
@@ -51,15 +51,16 @@ public class EPUBFormat implements Format {
 	//Seems most EPUB DRM uses Adobe Digital Editions or Apple FairPlay
 		
 	@Override
-	public boolean containsDRM(File pEPUB) {
-		boolean ret = false;
+	public Map<String, Boolean> containsDRM(File pEPUB) {
 		
-		boolean epubcheck = checkWithEpubCheck(pEPUB); 
-		ret |= epubcheck;
-		System.out.print("drm_epubcheck: "+epubcheck+", ");
-		boolean rights = checkForRightsFile(pEPUB); 
-		ret |= rights;
-		System.out.print("drm_rights: "+rights+", ");
+		Map<String, Boolean> ret = new HashMap<String, Boolean>();
+		
+		String test = "checkWithEpubCheck"; 
+		ret.put(test, EpubCheckWrapper.hasDRM(pEPUB));
+		gLogger.trace(test+": "+ret.get(test));
+		test = "checkForRightsFile";
+		ret.put(test, checkForRightsFile(pEPUB));
+		gLogger.trace(test+": "+ret.get(test));
 		
 		//System.gc();
 		
@@ -97,7 +98,7 @@ public class EPUBFormat implements Format {
 	
 	@Override
 	public String getVersion() {
-		return "0.0.3";
+		return "0.0.6";
 	}
 	
 	/**
@@ -107,16 +108,16 @@ public class EPUBFormat implements Format {
 	 * but object is on-per-DRMLint, not one-per-input-file. 
 	 */
 	@Override
-	public boolean isValid(File pFile) {
+	public Map<String, Boolean> isValid(File pFile) {
 		
-		boolean ret = false;
+		Map<String, Boolean> ret = new HashMap<String, Boolean>();
 
-		boolean epubcheck = isValidEpubCheck(pFile); 
-		ret |= epubcheck;
-		System.out.print("valid_epubcheck: "+epubcheck+", ");
-		boolean calibre = isValidCalibre(pFile);
-		ret |= calibre;
-		System.out.print("valid_calibre: "+calibre+", ");
+		String test = "isValidEpubCheck"; 
+		ret.put(test, EpubCheckWrapper.isValid(pFile)); 
+		gLogger.trace(test+": "+ret.get(test));
+		test = "isValidCalibre";
+		ret.put(test, CalibreWrapper.isValid(pFile));
+		gLogger.trace(test+": "+ret.get(test));
 		
 		//System.gc();
 
@@ -127,34 +128,6 @@ public class EPUBFormat implements Format {
 	// Private methods for this class
 	///////////////////////////////////////////////////////////////////////////////////////
 	
-	private boolean isValidCalibre(File pFile) {
-		boolean valid = CalibreWrapper.isValid(pFile);
-		return valid;
-	}
-	
-	private boolean isValidEpubCheck(File pFile) {
-		boolean ret = false;
-		
-		ret = EpubCheckWrapper.isValid(pFile);
-		
-		return ret;
-	}
-	
-	/**
-	 * Check for encryption with EpubCheck
-	 * - note that the first call to this method has a long (~10s) startup time, this
-	 *   must be epubcheck initialising
-	 * @param pEPUB
-	 * @return
-	 */
-	private boolean checkWithEpubCheck(File pEPUB) {
-		boolean ret = false;
-		
-		ret = EpubCheckWrapper.hasDRM(pEPUB);
-		
-		return ret;
-	}
-
 	/**
 	 * Check for rights.xml file
 	 * @param pEPUB

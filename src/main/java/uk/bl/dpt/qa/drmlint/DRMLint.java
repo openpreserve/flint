@@ -23,9 +23,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-
 import uk.bl.dpt.qa.drmlint.formats.EPUBFormat;
 import uk.bl.dpt.qa.drmlint.formats.Format;
 import uk.bl.dpt.qa.drmlint.formats.PDFFormat;
@@ -38,41 +38,6 @@ import uk.bl.dpt.qa.drmlint.formats.PDFFormat;
 public class DRMLint {
 	
 	private static Logger gLogger = Logger.getLogger(DRMLint.class);
-	
-	class CheckResult {
-		private boolean gDRM;
-		private boolean gValid;
-		private String gFilename;
-		private String gFormat;
-		private String gVersion;	
-		private long gTime;
-		public CheckResult(String pFilename, boolean pDRM, boolean pValid, String pFormat, String pVersion, long pTime) {
-			gDRM = pDRM;
-			gValid = pValid;
-			gFilename = pFilename;
-			gFormat = pFormat;
-			gVersion = pVersion;
-			gTime = pTime;
-		}
-		public boolean isDRM() {
-			return gDRM;
-		}
-		public boolean isValid() {
-			return gValid;
-		}
-		public String getFilename() {
-			return gFilename;
-		}
-		public String getFormat() {
-			return gFormat;
-		}
-		public String getVersion() {
-			return gVersion;
-		}
-		public long getTimeTaken() {
-			return gTime;
-		}
-	}
 	
 	private List<Format> formats = new LinkedList<Format>();
 	
@@ -88,7 +53,7 @@ public class DRMLint {
 	/**
 	 * Print a set of results as XML to stdout
 	 * @param pResults results to print
-	 * @param pOut output PrintWriter
+	 * @param pOut PrintWriter to send output to
 	 */
 	public static void printResults(List<CheckResult> pResults, PrintWriter pOut) {
 		pOut.println("<drmlint>");
@@ -96,8 +61,16 @@ public class DRMLint {
 		for(CheckResult result:pResults) {
 			pOut.println("     <check format=\""+result.getFormat()+"\" version=\""+result.getVersion()+"\" timeMS=\""+result.getTimeTaken()+"\">");
 			pOut.println("          <file>"+result.getFilename()+"</file>");
-			pOut.println("          <valid>"+result.isValid()+"</valid>");
-			pOut.println("          <drm>"+result.isDRM()+"</drm>");		
+			pOut.println("          <valid result=\""+result.isValid()+"\" >");
+			for(String k:result.getIsValidChecks().keySet()) {
+				pOut.println("               <test name=\""+k+"\" result=\""+result.getIsValidChecks().get(k)+"\" />");
+			}
+			pOut.println("          </valid>");
+			pOut.println("          <drm result=\""+result.isDRM()+"\" >");
+			for(String k:result.getDRMChecks().keySet()) {
+				pOut.println("               <test name=\""+k+"\" result=\""+result.getDRMChecks().get(k)+"\" />");
+			}
+			pOut.println("          </drm>");					
 			pOut.println("     </check>");
 		}
 		
@@ -112,10 +85,8 @@ public class DRMLint {
 	 */
 	public List<CheckResult> check(File pFile) {
 
-		boolean drm = false;
-		boolean valid = false;
 		boolean checked = false;
-		
+
 		String mimetype = FormatDetector.getMimetype(pFile);
 		
 		List<CheckResult> results = new ArrayList<CheckResult>();
@@ -123,16 +94,21 @@ public class DRMLint {
 		for(Format format:formats) {
 			if(format.canCheck(pFile, mimetype)) {
 				long time = System.currentTimeMillis();
+				
 				gLogger.trace("drmlint: "+pFile+" "+format.getFormatName());
 				gLogger.trace("Checking DRM");
-				drm |= format.containsDRM(pFile);
+				Map<String, Boolean> drmChecks = format.containsDRM(pFile);
+				// if file contains drm then these validity checks may well fail
+				// i.e. if drm exists then the validity result can't be fully assessed
 				gLogger.trace("Checking validity");
-				valid |= format.isValid(pFile);
+				Map<String, Boolean> isValidChecks = format.isValid(pFile);
+				
 				//calculate time taken and reset time counter
 				long timeTaken = (System.currentTimeMillis()-time);
-				time = System.currentTimeMillis();
-				results.add(new CheckResult(pFile.getAbsolutePath(), drm, valid, format.getFormatName(), format.getVersion(), timeTaken));
-				System.out.println(format.getFormatName()+": v"+format.getVersion()+", "+pFile+", drm: "+drm+", valid: "+valid+", time: "+timeTaken+"ms");
+				
+				CheckResult result = new CheckResult(pFile.getAbsolutePath(), drmChecks, isValidChecks, format.getFormatName(), format.getVersion(), timeTaken);
+				System.out.println(result);
+				results.add(result);
 				checked = true;
 			}
 		}
@@ -153,6 +129,9 @@ public class DRMLint {
 					files.add(f);
 				}
 			}
+		} else {
+			//we might just pass a single file
+			files.add(dir);
 		}
 	}
 	
@@ -165,14 +144,13 @@ public class DRMLint {
 		List<CheckResult> results = new ArrayList<CheckResult>();
 		
 		for(File file:files) {
+			System.out.println("Checking: "+file);
 			results.addAll(lint.check(file));
 		}
 		
-		//printResults(results, System.out);
-		
 		PrintWriter out;
 		try {
-			out = new PrintWriter(new FileWriter("results.xml"));
+			out = new PrintWriter(new FileWriter("test_results.xml"));
 			printResults(results, out);
 			out.close();
 		} catch (IOException e) {
@@ -191,18 +169,34 @@ public class DRMLint {
 		
 		DRMLint lint = new DRMLint();
 		
-		if(0==args.length) {
-			test(lint);
-			return;
+		try {
+			if(0==args.length) {
+				test(lint);
+				return;
+			} 
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		
 		List<CheckResult> results = new ArrayList<CheckResult>();
 		
 		for(String file:args) {
-			results.addAll(lint.check(new File(file)));
+			try {
+				results.addAll(lint.check(new File(file)));
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
-		//printResults(results);
+		PrintWriter out;
+		try {
+			out = new PrintWriter(new FileWriter("results.xml"));
+			printResults(results, out);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	

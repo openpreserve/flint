@@ -16,10 +16,7 @@
  */
 package uk.bl.dpt.qa.drmlint.wrappers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintWriter;
-
 import com.adobe.epubcheck.api.EpubCheck;
 
 /**
@@ -42,13 +39,11 @@ public class EpubCheckWrapper {
 	public static boolean isValid(File pFile) {
 		boolean ret = false;
 		
-		//buffer outputs so it doesn't spam stdout
-		//this won't work with 3.0.1 as WriterReportImpl.fixMessage doesn't properly handle null, like DefaultReportImpl does
-		//Fixed in locally installed 3.0.1 (see http://code.google.com/p/epubcheck/issues/detail?id=295)
-		PrintWriter pw = new PrintWriter(new ByteArrayOutputStream());
-		EpubCheck epubcheck = new EpubCheck(pFile, pw);
-		ret = epubcheck.validate();
-		pw.close();
+		EpubCheckWrapperReport report = new EpubCheckWrapperReport();
+		EpubCheck epubcheck = new EpubCheck(pFile, report);
+		epubcheck.validate();
+		
+		ret = report.isValidAccordingToPolicy();
 		
 		return ret;
 	}
@@ -64,14 +59,13 @@ public class EpubCheckWrapper {
 		boolean ret = false;
 		
 		EpubCheckWrapperReport report = new EpubCheckWrapperReport();
-		
 		EpubCheck epubcheck = new EpubCheck(pFile, report);
-		
 		epubcheck.validate();
 		
 		ret = report.hasEncryption();
 		
 		return ret;
+		
 	}
 	
 }
