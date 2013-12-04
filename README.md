@@ -1,6 +1,8 @@
 
 # DRMLint
 
+[![Build Status](https://travis-ci.org/bl-dpt/drmlint.png)](https://travis-ci.org/bl-dpt/drmlint)
+
 Check for format validity and detect DRM in PDF and EPUB files
 
 ### What does X do?
@@ -48,10 +50,6 @@ DRMLint is released under [Apache version 2.0 license](LICENSE.txt).  *Note that
 ### Acknowledgements
 
 Part of this work was supported by the European Union in the 7th Framework Program, IST, through the SCAPE project, Contract 270137.
-
-## Develop
-
-[![Build Status](https://travis-ci.org/bl-dpt/drmlint.png)](https://travis-ci.org/bl-dpt/drmlint)
 
 ### Requirements
 
