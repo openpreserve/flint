@@ -5,7 +5,7 @@
 
 Check for format validity and detect DRM in PDF and EPUB files
 
-### What does X do?
+### What does DRMLint do?
 
 DRMLint uses a variety of libraries and tools, as well as internal logic, to assess PDF/EPUB files:
 * Apache PDFBox

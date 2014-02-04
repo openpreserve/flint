@@ -19,6 +19,7 @@ package uk.bl.dpt.qa.drmlint.formats;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -144,7 +145,7 @@ public class PDFFormat implements Format {
 		return valid;
 	}
 
-	@SuppressWarnings("unused")
+//	@SuppressWarnings("unused")
 //	private boolean isValidJhove2(File pFile) {
 //		boolean ret = false;
 //		ret = Jhove2Wrapper.isValid(pFile);
@@ -158,16 +159,28 @@ public class PDFFormat implements Format {
 	 * @return
 	 */
 	private boolean checkDRMNaiive(File pPDF) {
-		
 		boolean ret = false;
-		
-		Scanner scanner = null;
 		try {
-			scanner = new Scanner(new FileInputStream(pPDF));
+			return checkDRMNaiive(new FileInputStream(pPDF));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return ret;
+	}
+
+	
+	/**
+	 * Search for /encrypt in file 
+	 * NOTE: this might be found in content but if we're being conservative it might be useful 
+	 * @param pStream
+	 * @return
+	 */
+	private boolean checkDRMNaiive(InputStream pStream) {
+		
+		boolean ret = false;
+		
+		Scanner scanner = new Scanner(pStream);
 
 		//just try and find the first occurrence of /encrypt (note that this might actually be in the content)
 		//scanner.findWithinHorizon("/[rR][oO][oO][tT]", 0);
@@ -181,6 +194,5 @@ public class PDFFormat implements Format {
 
 		return ret;
 	}
-
 	
 }

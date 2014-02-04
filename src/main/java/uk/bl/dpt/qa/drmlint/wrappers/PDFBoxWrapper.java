@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.apache.log4j.Logger;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.io.RandomAccess;
 import org.apache.pdfbox.io.RandomAccessFile;
 import org.apache.pdfbox.pdfparser.PDFParser;
@@ -62,30 +61,42 @@ public class PDFBoxWrapper {
 		boolean ret = false;
 		
 		try {
-			PreflightParser parser = new PreflightParser(pFile);
-			parser.parse();
-			PreflightDocument document = parser.getPreflightDocument();
-			document.validate();
-			ValidationResult result = document.getResult();
-			document.close();
-			
-			boolean syntaxError = false;
-			for(ValidationError ve:result.getErrorsList()) {
-				if(ve.getErrorCode().startsWith("1")) {
-					syntaxError = true;
+			try {
+				PreflightParser parser = new PreflightParser(pFile);
+				parser.parse();
+				PreflightDocument document = parser.getPreflightDocument();
+				document.validate();
+				ValidationResult result = document.getResult();
+				document.close();
+
+				boolean syntaxError = false;
+				for(ValidationError ve:result.getErrorsList()) {
+					if(ve.getErrorCode().startsWith("1")) {
+						System.err.println("Syntax error: "+ve.getErrorCode()+" "+ve.getDetails());
+						syntaxError = true;
+					}
 				}
+				if(!syntaxError) {
+					ret = true;
+				}
+
+			} catch(SyntaxValidationException e) {
+				// occurs if a suitable security handler cannot be found - in this case it is better 
+				// to fail for manual investigation
+				ret = false;			
+			} catch (Exception e) {
+				//This can cause "FATAL org.apache.hadoop.mapred.Child: Error running child : java.lang.AbstractMethodError"
+				//e.printStackTrace();
+				ret = false;
 			}
-			if(!syntaxError) {
-				ret = true;
-			}
-			
-		} catch(SyntaxValidationException e) {
-			// occurs if a suitable security handler cannot be found - in this case it is better 
-			// to fail for manual investigation
-			ret = false;			
-		} catch (Exception e) {
-			e.printStackTrace();
-			ret = false;
+		} catch(StackOverflowError e) {
+			//Not nice
+			gLogger.fatal("StackOverflowError: "+e.getMessage());
+		} catch(OutOfMemoryError e) {
+			// Panic
+			System.gc();
+			//Not nice
+			gLogger.fatal("OutOfMemoryError: "+e.getMessage());
 		}
 		return ret;
 	}
@@ -287,7 +298,7 @@ public class PDFBoxWrapper {
 			ts.writeText(doc, out);
 			// TODO: extract text from embedded files?
 			out.close();
-			doc.close();	
+			doc.close();		
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

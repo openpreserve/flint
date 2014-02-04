@@ -32,6 +32,7 @@ import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 
 /**
  * Class to wrap iText for the purposes of extracting text from PDFs 
+ * Initial testing seems to show PDFBox/Calibre doing a better job
  * @author wpalmer
  *
  */
