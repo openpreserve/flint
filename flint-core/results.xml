@@ -1,0 +1,91 @@
+<drmlint>
+     <check format="PDF" version="0.0.6" timeMS="44425">
+          <file>C:\c\Users\ageuder\test_pdfs\Clojure_Programming.pdf</file>
+          <valid result="true" >
+               <test name="isValid_iText" result="true" />
+               <test name="isValidPDFBox" result="false" />
+          </valid>
+          <drm result="false" >
+               <test name="checkDRMNaiive" result="false" />
+               <test name="checkDRMPDFBoxAbsolute" result="false" />
+               <test name="checkDRM_iText" result="false" />
+               <test name="checkDRMPDFBoxGranular" result="false" />
+          </drm>
+			<policy result="false"
+				<test name="Checks for invalid or incomplete font dictionaries" result="true" />
+			</policy>
+     </check>
+</drmlint>
+<drmlint>
+     <check format="PDF" version="0.0.6" timeMS="720">
+          <file>C:\c\Users\ageuder\test_pdfs\DebWoodyard.pdf</file>
+          <valid result="true" >
+               <test name="isValid_iText" result="true" />
+               <test name="isValidPDFBox" result="false" />
+          </valid>
+          <drm result="false" >
+               <test name="checkDRMNaiive" result="false" />
+               <test name="checkDRMPDFBoxAbsolute" result="false" />
+               <test name="checkDRM_iText" result="false" />
+               <test name="checkDRMPDFBoxGranular" result="false" />
+          </drm>
+			<policy result="false"
+				<test name="Checks for invalid or incomplete font dictionaries" result="true" />
+			</policy>
+     </check>
+</drmlint>
+<drmlint>
+     <check format="PDF" version="0.0.6" timeMS="3508">
+          <file>C:\c\Users\ageuder\test_pdfs\HTML5_Geolocation.pdf</file>
+          <valid result="true" >
+               <test name="isValid_iText" result="true" />
+               <test name="isValidPDFBox" result="false" />
+               <test name="isValidJhove1" result="false" />
+          </valid>
+          <drm result="false" >
+               <test name="checkDRMNaiive" result="false" />
+               <test name="checkDRMPDFBoxAbsolute" result="false" />
+               <test name="checkDRM_iText" result="false" />
+               <test name="checkDRMPDFBoxGranular" result="false" />
+          </drm>
+			<policy result="false"
+				<test name="Checks for invalid or incomplete font dictionaries" result="true" />
+			</policy>
+     </check>
+</drmlint>
+<drmlint>
+     <check format="PDF" version="0.0.6" timeMS="15752">
+          <file>C:\c\Users\ageuder\test_pdfs\thinkbayes.pdf</file>
+          <valid result="true" >
+               <test name="isValid_iText" result="true" />
+               <test name="isValidPDFBox" result="false" />
+          </valid>
+          <drm result="false" >
+               <test name="checkDRMNaiive" result="false" />
+               <test name="checkDRMPDFBoxAbsolute" result="false" />
+               <test name="checkDRM_iText" result="false" />
+               <test name="checkDRMPDFBoxGranular" result="false" />
+          </drm>
+			<policy result="false"
+				<test name="Checks for invalid or incomplete font dictionaries" result="true" />
+			</policy>
+     </check>
+</drmlint>
+<drmlint>
+     <check format="PDF" version="0.0.6" timeMS="9152">
+          <file>C:\c\Users\ageuder\test_pdfs\thinkstats.pdf</file>
+          <valid result="true" >
+               <test name="isValid_iText" result="true" />
+               <test name="isValidPDFBox" result="false" />
+          </valid>
+          <drm result="false" >
+               <test name="checkDRMNaiive" result="false" />
+               <test name="checkDRMPDFBoxAbsolute" result="false" />
+               <test name="checkDRM_iText" result="false" />
+               <test name="checkDRMPDFBoxGranular" result="false" />
+          </drm>
+			<policy result="false"
+				<test name="Checks for invalid or incomplete font dictionaries" result="true" />
+			</policy>
+     </check>
+</drmlint>

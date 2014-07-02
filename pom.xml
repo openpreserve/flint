@@ -1,18 +1,75 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>uk.bl.dpt.qa</groupId>
-	<artifactId>drmlint</artifactId>
-	<packaging>jar</packaging>
-	<version>0.2.0-SNAPSHOT</version>
-	<name>drmlint</name>
-	<properties>
-		<mainclass></mainclass>
-		<!-- <mainclass>uk.bl.dpt.qa.drmlint.DRMLint</mainclass> -->
-	</properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.bl.dpt.qa</groupId>
+    <artifactId>flint</artifactId>
+    <packaging>pom</packaging>
+    <version>0.6.0-SNAPSHOT</version>
+    <name>Flint - a File/Format validation tool</name>
+
+    <modules>
+        <!-- the core module a.k.a the engine -->
+        <module>flint-core</module>
+        <!-- all implementations of the api's interfaces -->
+        <module>flint-pdf</module>
+        <!-- a collection of third-party tools wrapped in a standard way of accessing them -->
+        <module>flint-toolwrappers</module>
+        <!-- a slim jsr-356 websocket based server for any client-ui -->
+        <module>flint-serve</module>
+        <!-- module to register all known format implementations -->
+        <module>flint-register</module>
+
+        <!-- the following are different use-case specific entries to flint -->
+        <!-- command line interface -->
+        <module>flint-cli</module>
+        <!-- javafx UI -->
+        <module>flint-fx</module>
+        <!-- to run on a hadoop cluster -->
+        <module>flint-hadoop</module>
+        <module>flint-epub</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.6</java.version>
+
+        <mainclass>uk.bl.dpt.qa.flint.FLint</mainclass>
+
+        <!-- managed versions -->
+        <argparse4j.version>0.4.3</argparse4j.version>
+        <bcprov-jdk15on.version>1.49</bcprov-jdk15on.version>
+        <commons-lang3.version>3.3.1</commons-lang3.version>
+        <controlsfx.version>8.0.5</controlsfx.version>
+        <cucumber.version>1.1.6</cucumber.version>
+        <dptutils.version>0.0.1-SNAPSHOT</dptutils.version>
+        <epubcheck.version>v4.0.0-alpha2</epubcheck.version>
+        <fest-assert.version>1.4</fest-assert.version>
+        <guava.version>17.0</guava.version>
+        <hadoop-client.version>2.0.0-mr1-cdh4.2.0</hadoop-client.version>
+        <itextpdf.version>5.4.4</itextpdf.version>
+        <jackson.version>1.9.13</jackson.version>
+        <javax.websocket-api.version>1.0</javax.websocket-api.version>
+        <jboss-websocket-api_1.0_spec>1.0.0.Final</jboss-websocket-api_1.0_spec>
+        <jetty.version>9.1.3.v20140225</jetty.version>
+        <jhove.version>1.11a1</jhove.version>
+        <junit.version>4.11</junit.version>
+        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+        <maven-war-plugin.version>2.4</maven-war-plugin.version>
+        <mrunit.version>1.0.0</mrunit.version>
+        <pdfbox.version>2.0.0-SNAPSHOT</pdfbox.version>
+        <reflections.version>0.9.9-RC1</reflections.version>
+        <slf4j.version>1.7.6</slf4j.version>
+        <tika-parsers.version>1.4</tika-parsers.version>
+        <xz.version>1.3</xz.version>
+    </properties>
+
 	<repositories>
 		<repository>
-
 			<id>apache snapshots</id>
 			<url>http://repository.apache.org/snapshots/</url>
 			<releases>
@@ -27,145 +84,235 @@
 			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
 		</repository>
 	</repositories>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>preflight</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.idpf</groupId>
-			<artifactId>epubcheck</artifactId>
-			<version>3.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opf-labs.jhove</groupId>
-			<artifactId>jhove</artifactId>
-			<version>1.10</version>
-		</dependency>
-		<!-- note that to use jhove2 a different method of making a single jar 
-			is required, or just use the standalone jar and dependencies -->
-		<!-- <dependency> <groupId>org.jhove2</groupId> <artifactId>jhove2</artifactId> 
-			<version>2.1.0</version> </dependency> -->
-		<!-- Note that iText is licensed under AGPL3 -->
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.4.4</version>
-		</dependency>
-		<!-- bouncycastle libs for itext -->
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.49</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.49</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<optional>false</optional>
-		</dependency>
-		<!-- end of bouncycastle libs -->
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-parsers</artifactId>
-			<version>1.4</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- this is here to stop tika complaining about noclassdeffound see: https://issues.apache.org/jira/browse/COMPRESS-221 -->
-		<dependency>
-			<groupId>org.tukaani</groupId>
-			<artifactId>xz</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<version>2.0.0-mr1-cdh4.2.0</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<mainClass>${mainclass}</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>${mainclass}</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- this prevents maven trying to be smart -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<useProjectReferences>false</useProjectReferences>
-				</configuration>
-			</plugin>
-		</plugins>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>${jetty.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                    <configuration>
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
-	</build>
+    <dependencyManagement>
+        <dependencies>
+            <!-- utility collection by the DBT@BL -->
+            <dependency>
+                <groupId>uk.bl.dpt</groupId>
+                <artifactId>dptutils</artifactId>
+                <version>${dptutils.version}</version>
+            </dependency>
+
+            <!-- other utilities -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <!-- testing -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-core</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-java</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-junit</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.mrunit</groupId>
+                <artifactId>mrunit</artifactId>
+                <version>${mrunit.version}</version>
+                <classifier>hadoop2</classifier>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.easytesting</groupId>
+                <artifactId>fest-assert</artifactId>
+                <version>${fest-assert.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- need reflections to get Format implementations at runtime -->
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
+            </dependency>
+            <!-- parse command line arguments in a shiny way -->
+            <dependency>
+                <groupId>net.sourceforge.argparse4j</groupId>
+                <artifactId>argparse4j</artifactId>
+                <version>${argparse4j.version}</version>
+            </dependency>
+
+            <!-- logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- java-fx addons -->
+            <dependency>
+                <groupId>org.controlsfx</groupId>
+                <artifactId>controlsfx</artifactId>
+                <version>${controlsfx.version}</version>
+            </dependency>
+
+            <!-- websocket jsr-356 api)-->
+            <dependency>
+                <groupId>javax.websocket</groupId>
+                <artifactId>javax.websocket-api</artifactId>
+                <version>${javax.websocket-api.version}</version>
+            </dependency>
+            <!-- jetty implementation of server side jsr-356 -->
+            <dependency>
+                <groupId>org.eclipse.jetty.websocket</groupId>
+                <artifactId>websocket-server</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.websocket</groupId>
+                <artifactId>javax-websocket-client-impl</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+
+            <!-- json en/de-coding -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>preflight</artifactId>
+                <version>${pdfbox.version}</version>
+            </dependency>
+            <!-- epubcheck defunct until a new version comes out-->
+            <dependency>
+                <groupId>org.idpf</groupId>
+                <artifactId>epubcheck</artifactId>
+                <version>${epubcheck.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opf-labs.jhove</groupId>
+                <artifactId>jhove</artifactId>
+                <version>${jhove.version}</version>
+            </dependency>
+            <!-- note that to use jhove2 a different method of making a single jar
+                is required, or just use the standalone jar and dependencies -->
+            <!-- <dependency> <groupId>org.jhove2</groupId> <artifactId>jhove2</artifactId>
+                <version>2.1.0</version> </dependency> -->
+            <!-- Note that iText is licensed under AGPL3 -->
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itextpdf</artifactId>
+                <version>${itextpdf.version}</version>
+            </dependency>
+            <!-- bouncycastle libs for itext -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bcprov-jdk15on.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+                <optional>false</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>${bcprov-jdk15on.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+                <optional>false</optional>
+            </dependency>
+            <!-- end of bouncycastle libs -->
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parsers</artifactId>
+                <version>${tika-parsers.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <!-- this is here to stop tika complaining about noclassdeffound see: https://issues.apache.org/jira/browse/COMPRESS-221 -->
+            <dependency>
+                <groupId>org.tukaani</groupId>
+                <artifactId>xz</artifactId>
+                <version>${xz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-client</artifactId>
+                <version>${hadoop-client.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 	<organization>
 		<name>British Library / SCAPE Project</name>
 		<url>www.scape-project.eu</url>
 	</organization>
+
 	<description>A tool to detect drm</description>
+
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -174,6 +321,7 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
+
 	<developers>
 		<developer>
 			<id>willp-bl</id>
@@ -183,5 +331,14 @@
 			<organization>British Library / SCAPE Project</organization>
 			<timezone>0</timezone>
 		</developer>
+		<developer>
+			<id>alecsg-bl</id>
+			<name>Alecs Geuder</name>
+			<email>alecs.geuder@bl.uk</email>
+			<url>http://www.scape-project.eu/</url>
+			<organization>British Library / SCAPE Project</organization>
+			<timezone>0</timezone>
+		</developer>
 	</developers>
+
 </project>
