@@ -1,6 +1,0 @@
-DRMLint TODO List
-=================
-
-* Add XML checking?
-* Add recursion in to zip files?
-* Add an enum for return codes after checking - true/false/unknown for better reporting

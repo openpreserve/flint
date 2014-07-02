@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane fx:id="mainStage" prefHeight="400.0" prefWidth="533.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.bl.dpt.qa.flint.Controller">
+<children><FlowPane prefHeight="50.0" prefWidth="533.0">
+<children><TextField alignment="CENTER" editable="false" prefHeight="80.0" prefWidth="533.0" text="FLintFX">
+<font>
+<Font name="Freestyle Script" size="39.0" />
+</font>
+<effect>
+<MotionBlur radius="2.41" />
+</effect></TextField>
+</children></FlowPane><GridPane layoutY="80.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="88.0" prefWidth="533.0">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="136.0" minHeight="10.0" prefHeight="115.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="92.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="31.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+<children><BorderPane prefHeight="67.0" prefWidth="267.0" style="-fx-border-style: dotted; -fx-border-color: grey;">
+<GridPane.margin>
+<Insets />
+</GridPane.margin>
+<center><TextField fx:id="inputPath" editable="false" text="click to select an input file to analise" BorderPane.alignment="CENTER" />
+</center>
+<top><Text strokeType="OUTSIDE" strokeWidth="0.0" text="input" BorderPane.alignment="CENTER" />
+</top>
+<padding>
+<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+</padding></BorderPane><BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-border-style: dotted;" GridPane.columnIndex="1">
+<opaqueInsets>
+<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+</opaqueInsets>
+<GridPane.margin>
+<Insets />
+</GridPane.margin>
+<center><TextField fx:id="outputPath" editable="false" text="click to select an output-folder" BorderPane.alignment="CENTER" />
+</center>
+<top><Text strokeType="OUTSIDE" strokeWidth="0.0" text="output" BorderPane.alignment="CENTER" />
+</top>
+<padding>
+<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+</padding></BorderPane>
+</children>
+</GridPane><TabPane fx:id="tabPane" layoutY="173.0" prefHeight="340.0" prefWidth="533.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+  <tabs>
+    <Tab fx:id="configTab" text="configuration">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+<children><VBox fx:id="policyPatterns" layoutX="14.0" layoutY="6.0" prefHeight="259.0" prefWidth="387.0">
+<padding>
+<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+</padding></VBox><Button fx:id="goButton" layoutX="436.0" layoutY="252.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="45.0" prefWidth="83.0" text="go!" visible="false" wrapText="true">
+<font>
+<Font name="Arial" size="20.0" />
+</font></Button>
+</children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab fx:id="processingTab" text="processing">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+<children><TextArea fx:id="logbook" editable="false" layoutX="11.0" layoutY="6.0" prefHeight="258.0" prefWidth="511.0">
+<font>
+<Font name="Courier New" size="12.0" />
+</font></TextArea>
+</children></AnchorPane>
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>
+</children>
+</AnchorPane>
