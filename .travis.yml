@@ -8,3 +8,7 @@ before_install:
   - cd jhove/jhove-releases
   - mvn clean install -DskipTests=true
   - cd ../..
+  - git clone https://github.com/bl-dpt/dptutils.git
+  - cd dptutils
+  - mvn clean install -DskipTests=true
+  - cd ..
