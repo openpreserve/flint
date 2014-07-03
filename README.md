@@ -58,7 +58,9 @@ FLint is for:
 To install you need:
 
 * Git client
-* Java Developers Kit (JDK6+)
+* Java Developers Kit
+  JDK6+ -- NOTE that flint-hadoop and dependend modules are restricted to 6, whereas flint-cli and flint-serve
+  need Java7, and flint-fx* requires java8 -- we're planning to not support java6 anymore in the near future.
 * Maven
 * Currently you will need a copy of (https://github.com/bl-dpt/dptutils) installed in your local maven repo
 
