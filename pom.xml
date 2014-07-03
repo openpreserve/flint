@@ -26,7 +26,8 @@
         <!-- command line interface -->
         <module>flint-cli</module>
         <!-- javafx UI -->
-        <module>flint-fx</module>
+        <!-- disabled by default, requires JDK8 -->
+        <!-- <module>flint-fx</module> -->
         <!-- to run on a hadoop cluster -->
         <module>flint-hadoop</module>
         <module>flint-epub</module>
