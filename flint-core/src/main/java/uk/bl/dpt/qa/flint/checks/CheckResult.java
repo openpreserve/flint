@@ -85,7 +85,7 @@ public class CheckResult {
     public void add(CheckCategory cc) {
         this.categories.put(cc.getName(), cc);
     }
-    public void addAll(Map<String, CheckCategory> ccMap) {
+    public void addAll(LinkedHashMap<String, CheckCategory> ccMap) {
         this.categories.putAll(ccMap);
     }
 

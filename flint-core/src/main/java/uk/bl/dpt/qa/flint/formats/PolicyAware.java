@@ -59,11 +59,11 @@ public abstract class PolicyAware {
      *                             validation process
      *  @return a report with resulting assertion errors and their frequency.
      */
-    public static Map<String, CheckCategory> policyValidationResult(StreamSource resultToBeValidated, StreamSource schema) throws Exception {
-        Map<String, CheckCategory> ccMap = new HashMap<String, CheckCategory>();
+    public static LinkedHashMap<String, CheckCategory> policyValidationResult(StreamSource resultToBeValidated, StreamSource schema) throws Exception {
+        LinkedHashMap<String, CheckCategory> ccMap = new LinkedHashMap<String, CheckCategory>();
         Validator validator = valFac.newValidator(schema, patternFilter);
         validator.validate(resultToBeValidated);
-        Map<String, ? extends Map<String, Integer>> report = validator.getReport();
+        LinkedHashMap<String, ? extends Map<String, Integer>> report = validator.getReport();
         for (Map.Entry<String, String> test : valFac.getAssertPatternMap(schema, patternFilter).entrySet()) {
             CheckCategory cc;
             if (ccMap.containsKey(test.getValue())) {

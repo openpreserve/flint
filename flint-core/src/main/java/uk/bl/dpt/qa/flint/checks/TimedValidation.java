@@ -21,9 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.LinkedHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A helper class to run timed validations using Callables inheriting from {@link uk.bl.dpt.qa.flint.checks.TimedTask}.
@@ -40,11 +42,11 @@ public class TimedValidation {
 
     private TimedValidation(){}
 
-    public static Map<String, CheckCategory> validate(TimedTask task, File contentFile) {
+    public static LinkedHashMap<String, CheckCategory> validate(TimedTask task, File contentFile) {
         executor = Executors.newSingleThreadExecutor();
         task.setContentFile(contentFile);
-        Map<String, CheckCategory> cMap = new HashMap<String, CheckCategory>();
-        Future<Map<String, CheckCategory>> future = executor.submit(task);
+        LinkedHashMap<String, CheckCategory> cMap = new LinkedHashMap<String, CheckCategory>();
+        Future<LinkedHashMap<String, CheckCategory>> future = executor.submit(task);
         LOGGER.info("calling time-limited validation task {}, timeout: {} seconds", task.name, task.timeout);
         try {
             cMap.putAll(future.get(task.timeout, TimeUnit.SECONDS));

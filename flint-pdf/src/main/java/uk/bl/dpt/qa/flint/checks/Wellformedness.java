@@ -25,8 +25,7 @@ import uk.bl.dpt.qa.flint.wrappers.Jhove1Wrapper;
 import uk.bl.dpt.qa.flint.wrappers.PDFBoxWrapper;
 import uk.bl.dpt.qa.flint.wrappers.iTextWrapper;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -45,9 +44,9 @@ public class Wellformedness extends TimedTask {
     }
 
     @Override
-    public Map<String, CheckCategory> call() throws Exception {
+    public LinkedHashMap<String, CheckCategory> call() throws Exception {
         String catName = FixedCategories.WELL_FORMED.toString();
-        Map<String, CheckCategory> cmap = new HashMap<String, CheckCategory>();
+        LinkedHashMap<String, CheckCategory> cmap = new LinkedHashMap<String, CheckCategory>();
         if (patternFilter == null || patternFilter.contains(catName) ) {
             logger.info("Adding additional well-formedness checks for {}", contentFile);
             CheckCategory cc = new CheckCategory(catName);

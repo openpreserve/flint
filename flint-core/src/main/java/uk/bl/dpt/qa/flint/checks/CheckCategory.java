@@ -18,8 +18,7 @@
 package uk.bl.dpt.qa.flint.checks;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * A set of CheckCategories together forms a
@@ -37,11 +36,11 @@ import java.util.Map;
 public class CheckCategory {
 
     private String name;
-    private Map<String, CheckCheck> checks;
+    private LinkedHashMap<String, CheckCheck> checks;
 
     public CheckCategory(String name) {
         this.name = name;
-        this.checks = new HashMap<String, CheckCheck>();
+        this.checks = new LinkedHashMap<String, CheckCheck>();
     }
 
     public void add(CheckCheck check) {

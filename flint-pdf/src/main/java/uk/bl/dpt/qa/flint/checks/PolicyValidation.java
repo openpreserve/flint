@@ -26,7 +26,7 @@ import uk.bl.dpt.qa.flint.wrappers.PDFBoxWrapper;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * Wrapper around the policy-validation process that produces an error message
@@ -42,7 +42,7 @@ public class PolicyValidation extends TimedTask  {
     }
 
     @Override
-    public Map<String, CheckCategory> call() throws Exception {
+    public LinkedHashMap<String, CheckCategory> call() throws Exception {
         logger.info("Performing a policy validation on {}", contentFile);
         ByteArrayOutputStream outputXml = PDFBoxWrapper.preflightToXml(contentFile);
         return PolicyAware.policyValidationResult(new StreamSource(new ByteArrayInputStream(outputXml.toByteArray())),

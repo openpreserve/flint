@@ -18,7 +18,7 @@
 package uk.bl.dpt.qa.flint.checks;
 
 import java.io.File;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.concurrent.Callable;
 
 /**
@@ -26,7 +26,7 @@ import java.util.concurrent.Callable;
  * timeout[seconds] has been reached. To be subclassed and used together with
  * {@link uk.bl.dpt.qa.flint.checks.TimedValidation}.
  */
-public abstract class TimedTask implements Callable<Map<String, CheckCategory>> {
+public abstract class TimedTask implements Callable<LinkedHashMap<String, CheckCategory>> {
 
     protected String name;
     protected File contentFile;

@@ -26,10 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Wrapper around additional specific DRM checks that produces an error message
@@ -47,8 +44,8 @@ public class SpecificDrmChecks extends TimedTask {
     }
 
     @Override
-    public Map<String, CheckCategory> call() throws Exception {
-        Map<String, CheckCategory> cmap = new HashMap<String, CheckCategory>();
+    public LinkedHashMap<String, CheckCategory> call() throws Exception {
+        LinkedHashMap<String, CheckCategory> cmap = new LinkedHashMap<String, CheckCategory>();
         if (patternFilter == null || patternFilter.contains(FixedCategories.NO_DRM.toString()) ) {
             logger.info("Adding specific DRM checks for {} to check-result", contentFile);
             CheckCategory cc = new CheckCategory(FixedCategories.NO_DRM.toString());
