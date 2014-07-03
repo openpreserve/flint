@@ -18,7 +18,8 @@
         <!-- a collection of third-party tools wrapped in a standard way of accessing them -->
         <module>flint-toolwrappers</module>
         <!-- a slim jsr-356 websocket based server for any client-ui -->
-        <module>flint-serve</module>
+        <!-- disabled by default, requires JDK7 -->
+        <!-- <module>flint-serve</module> -->
         <!-- module to register all known format implementations -->
         <module>flint-register</module>
 
