@@ -22,6 +22,9 @@ import uk.bl.dpt.qa.flint.checks.CheckCategory;
 import uk.bl.dpt.qa.flint.checks.CheckCheck;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+
 import static org.fest.assertions.Assertions.assertThat;
 
 
@@ -86,5 +89,23 @@ public class CheckResultTest {
         cc3.add(new CheckCheck("testCheck3", false, null));
         result.add(cc3);
         assertThat(result.isErroneous()).isEqualTo(false);
+    }
+
+    @Test
+    public void testToXMLAndFunnyCharacters() {
+        // create a result with a single quote in the name
+        CheckResult result = new CheckResult("Mr Mac Meier's new toys", "aFormat", "aVersion");
+        CheckCategory cc1 = new CheckCategory("Other funny characters: $%&");
+        cc1.add(new CheckCheck("Even here: @¬?", false, null));
+        result.add(cc1);
+        result.setTime(System.currentTimeMillis());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintWriter pw = new PrintWriter(output);
+        result.toXML(pw, "", "");
+        pw.close();
+        assertThat(output.toString())
+                .startsWith("<checkedFile name='Mr Mac Meier&apos;s new toys' result='failed' format='aFormat' version='aVersion' ")
+                .contains("<checkCategory name='Other funny characters: $%&amp;' result='failed'")
+                .endsWith(String.format("</checkedFile>%n"));
     }
 }

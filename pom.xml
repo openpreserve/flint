@@ -15,6 +15,7 @@
         <module>flint-core</module>
         <!-- all implementations of the api's interfaces -->
         <module>flint-pdf</module>
+        <module>flint-epub</module>
         <!-- a collection of third-party tools wrapped in a standard way of accessing them -->
         <module>flint-toolwrappers</module>
         <!-- a slim jsr-356 websocket based server for any client-ui -->
@@ -30,7 +31,6 @@
         <!-- <module>flint-fx</module> -->
         <!-- to run on a hadoop cluster -->
         <module>flint-hadoop</module>
-        <module>flint-epub</module>
     </modules>
 
     <properties>

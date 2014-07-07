@@ -18,12 +18,15 @@
 package uk.bl.dpt.qa.flint.checks;
 
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_XML10;
 
 /**
  * A CheckResult summarises the outcome of a range of checks on a particular file.
@@ -118,7 +121,7 @@ public class CheckResult {
 
     public void toXML(PrintWriter pw, String shift, String indent) {
         pw.println(String.format("%s<checkedFile name='%s' result='%s' format='%s' version='%s' totalCheckTime='%s'>",
-                shift, getFilename(), getResult(), getFormat(), getVersion(), getTimeTaken()));
+                shift, ESCAPE_XML10.translate(getFilename()), getResult(), getFormat(), getVersion(), getTimeTaken()));
         for (CheckCategory cc : this.categories.values()) {
             if (cc != null) cc.toXML(pw, shift + indent, indent);
         }
