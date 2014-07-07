@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.bl.dpt.qa</groupId>
         <artifactId>flint</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
+        <version>0.6.0</version>
     </parent>
 
     <artifactId>flint-core</artifactId>
