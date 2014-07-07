@@ -16,33 +16,15 @@
  */
 package uk.bl.dpt.qa.flint.wrappers;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  * Tools class
@@ -55,156 +37,6 @@ public class Tools {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * Recover the value associated with a xpath expression
-	 * @param pFile file
-	 * @param pXPath XPath expression to evaluate
-	 * @return value value associated with the xpath expression (or null if error)
-	 */
-	public static String getXpathVal(File pFile, String pXPath) {
-		try {
-			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = docB.parse(pFile);
-			Node root = doc.getFirstChild();
-			XPath xpath = XPathFactory.newInstance().newXPath();
-			return xpath.evaluate(pXPath, root);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (XPathExpressionException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * Recover the value associated with a xpath expression
-	 * @param pFileName xml file
-	 * @param pXPath XPath expression to evaluate
-	 * @return value value associated with the xpath expression (or null if error)
-	 */
-	public static String getXpathVal(InputStream pFileName, String pXPath) {
-		try {
-			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = docB.parse(pFileName);
-			Node root = doc.getFirstChild();		
-			XPath xpath = XPathFactory.newInstance().newXPath();
-			return xpath.evaluate(pXPath, root);
-		} catch (ParserConfigurationException pce) {
-		} catch (NumberFormatException e) {
-		} catch (XPathExpressionException e) {
-		} catch (SAXException e) {
-		} catch (IOException e) {
-		}
-		return null;
-	}
-	
-	/**
-	 * Copies an inputstream to a file
-	 * @param pClass base class to use to find resource
-	 * @param pResource resource to find
-	 * @param pFile local file to write to
-	 * @throws IOException if an error occurred
-	 */
-	public static void copyResourceToFile(Class<?> pClass, String pResource, String pFile) throws IOException {
-		FileOutputStream out = new FileOutputStream(pFile);
-		InputStream in = getResource(pClass, pResource);
-		byte[] readBuffer = new byte[32768];
-		int bytesRead = 0;
-		while(in.available()>0) {
-			bytesRead = in.read(readBuffer);
-			out.write(readBuffer, 0, bytesRead);
-		}
-		in.close();
-		out.close();
-	}	
-	
-	/**
-	 * Copies an inputstream to a file
-	 * @param pBuffer buffer to read
-	 * @param pFile local file to write to
-	 * @throws IOException if an error occurred
-	 */
-	public static void copyBufferToFile(Reader pBuffer, File pFile) throws IOException {
-		BufferedWriter out = new BufferedWriter(new FileWriter(pFile));
-		char[] readBuffer = new char[32768];
-		int bytesRead = 0;
-		while(pBuffer.ready()) {
-			bytesRead = pBuffer.read(readBuffer);
-			out.write(readBuffer, 0, bytesRead);
-		}
-		out.close();
-	}
-	
-	/**
-	 * Gets an InputStream for a resource from a jar
-	 * @param pClass Class reference
-	 * @param pRes resource path in jar
-	 * @return InputStream for resource
-	 */
-	public static InputStream getResource(Class<?> pClass, String pRes) {
-		return pClass.getClassLoader().getResourceAsStream(pRes);
-	}
-	
-	/**
-	 * Generates a checksum for a file 
-	 * @param pType type of checksum to generate (MD5/SHA1 etc)
-	 * @param pInFile file to checksum
-	 * @return A String with the format MD5:XXXXXX or SHA1:XXXXXX
-	 * @throws IOException file access error
-	 */
-	public static String generateChecksum(String pType, String pInFile) throws IOException {
-
-		if(!new File(pInFile).exists()) throw new IOException("File not found: "+pInFile);
-		
-		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance(pType.toUpperCase());
-		} catch (NoSuchAlgorithmException e) {
-			return null;
-		}
-		
-		FileInputStream input;
-		try {
-			input = new FileInputStream(pInFile);
-			byte[] readBuffer = new byte[32768];
-			int bytesRead = 0;
-			while(input.available()>0) {
-				bytesRead = input.read(readBuffer);
-				md.update(readBuffer, 0, bytesRead);
-			}
-			input.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		String hash = "";
-		for(byte b : md.digest()) hash+=String.format("%02x", b);
-		return hash;
-	}	
-	
-	/**
-	 * Recursively delete a local directory
-	 * @param pDir directory to delete
-	 * @return success
-	 */
-	public static boolean deleteDirectory(File pDir) {
-		boolean ret = true;
-		for(File f:pDir.listFiles()) {
-			if(f.isDirectory()) ret&=deleteDirectory(f);
-			ret&=f.delete();
-		}
-		ret&=pDir.delete();
-		return ret;
-	}
-	
 	/**
 	 * Creates a new temporary directory 
 	 * @return File object for new directory
@@ -219,19 +51,6 @@ public class Tools {
 		
 	}
 	
-	/**
-	 * Generates a checksum for a file 
-	 * @param pInFile file to checksum
-	 * @return A String with the format MD5:XXXXXX or SHA1:XXXXXX
-	 * @throws IOException file access error
-	 */
-	public static String generateChecksum(String pInFile) throws IOException {
-
-		String type = "MD5";
-		return type+":"+generateChecksum(type, pInFile);
-		
-	}
-
 	/**
 	 * Convenience method to zip the generated files together (no compression)
 	 * @param pSuccess whether workflow was successful or not

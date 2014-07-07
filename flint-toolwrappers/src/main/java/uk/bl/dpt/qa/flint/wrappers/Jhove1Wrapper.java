@@ -17,10 +17,12 @@
 package uk.bl.dpt.qa.flint.wrappers;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.bl.dpt.utils.util.XMLUtil;
 import edu.harvard.hul.ois.jhove.App;
 import edu.harvard.hul.ois.jhove.JhoveBase;
 import edu.harvard.hul.ois.jhove.JhoveException;
@@ -82,7 +84,7 @@ public class Jhove1Wrapper {
 			//THIS IS A HORRID HORRID HACK TO GET AROUND JHOVE NAMESPACE ISSUES WHEN NOT ABLE TO CONNECT TO INTERNET
 			String xpath = "/*[local-name()='jhove']/*[local-name()='repInfo']/*[local-name()='status']/text()";
 			
-			String status = Tools.getXpathVal(temp, xpath);
+			String status = XMLUtil.getXpathVal(new FileInputStream(temp), xpath);
 			if(null==status) {
 				LOGGER.warn(temp.getAbsolutePath()+": NULL");
 			} else {

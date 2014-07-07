@@ -24,6 +24,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import uk.bl.dpt.utils.checksum.ChecksumUtil;
+import uk.bl.dpt.utils.util.FileUtil;
+import uk.bl.dpt.utils.util.ResourceUtil;
+import uk.bl.dpt.utils.util.StreamUtil;
+
 
 /**
  * Java wrapper for Exiftool
@@ -57,12 +62,12 @@ public class ExiftoolWrapper {
 		if(os.contains("windows")) {
 			try {
 				File tempExe = File.createTempFile("exiftool-flint-", ".exe");
-				Tools.copyResourceToFile(ExiftoolWrapper.class, EXIFTOOL_WINDOWS, tempExe.getAbsolutePath());
+				StreamUtil.copyStreamToFile(ResourceUtil.loadResource(EXIFTOOL_WINDOWS), tempExe);
 				if(!tempExe.exists()) { 
 					System.err.println("ERROR: unable to recover exe from jar");
 				} else {
 					//check exe here - it is not copying ok!?
-					String checksum = Tools.generateChecksum("MD5", tempExe.getAbsolutePath()).toLowerCase();
+					String checksum = ChecksumUtil.generateChecksum("MD5", tempExe.getAbsolutePath()).toLowerCase();
 					if(!checksum.equals(EXIFTOOL_WINDOWS_MD5)) {
 						System.err.println("ERROR: exiftool checksum mismatch -> "+tempExe.getAbsolutePath());
 						System.err.println("       resource: "+EXIFTOOL_WINDOWS_MD5+" copy: "+checksum);
@@ -116,7 +121,7 @@ public class ExiftoolWrapper {
 		//do something with stdout buffer
 		try {
 			File tempXml = File.createTempFile("flint-exiftool-output-", ".xml");
-			Tools.copyBufferToFile(runner.getStdout(), tempXml);
+			FileUtil.writeReaderToFile(runner.getStdout(), tempXml);
 			//tempXml.deleteOnExit();
 			return tempXml;
 		} catch (IOException e) {

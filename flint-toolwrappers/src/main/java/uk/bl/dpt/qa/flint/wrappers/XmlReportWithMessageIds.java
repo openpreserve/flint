@@ -20,9 +20,6 @@ import com.adobe.epubcheck.messages.Message;
 import com.adobe.epubcheck.messages.MessageId;
 import com.adobe.epubcheck.messages.MessageLocation;
 import com.adobe.epubcheck.messages.Severity;
-import com.adobe.epubcheck.util.DefaultReportImpl;
-import com.adobe.epubcheck.util.FeatureEnum;
-import com.adobe.epubcheck.util.PathUtil;
 import com.adobe.epubcheck.util.XmlReportImpl;
 
 import java.io.File;

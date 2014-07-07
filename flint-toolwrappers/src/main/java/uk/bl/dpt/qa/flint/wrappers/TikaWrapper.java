@@ -17,10 +17,10 @@
 package uk.bl.dpt.qa.flint.wrappers;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tika.Tika;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -45,11 +45,29 @@ public class TikaWrapper {
 	 * @return the mimetype of the file
 	 */
 	public static String getMimetype(File pFile) {
-		
+			try {
+				return getMimetype(TikaInputStream.get(pFile));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+	}
+
+	/**
+	 * Get the mimetype of an inputstream
+	 * @param pInput inputstream to use
+	 * @return mimetype
+	 * @throws IOException on error
+	 */
+	public static String getMimetype(InputStream pInput) throws IOException {
 		String type = null;
 
 		try {
-			TikaInputStream tis = TikaInputStream.get(pFile);
+			TikaInputStream tis = TikaInputStream.get(pInput);
 			MediaType mt = detector.detect(tis, new Metadata());
 			type = mt.toString();//e.g. "image/tiff"
 		} catch (IOException e) {
@@ -58,10 +76,6 @@ public class TikaWrapper {
 		}
 		
 		return type;
-	}
-
-	public static String getMimetype(InputStream input) throws IOException {
-        return new Tika().detect(input);
 	}
 
 }

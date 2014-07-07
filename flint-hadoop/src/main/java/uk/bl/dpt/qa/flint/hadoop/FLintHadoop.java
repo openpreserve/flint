@@ -23,7 +23,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.SkipBadRecords;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -33,10 +32,13 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import uk.bl.dpt.qa.flint.FLint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.converter.PDFToText;
 import uk.bl.dpt.qa.flint.wrappers.Tools;
+import uk.bl.dpt.utils.checksum.ChecksumUtil;
+import uk.bl.dpt.utils.util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -120,7 +122,7 @@ public class FLintHadoop {
 
             // clean up temp dir
             if (gTempDir.exists()) {
-                Tools.deleteDirectory(gTempDir);
+                FileUtil.deleteDirectory(gTempDir);
             }
 
         }
@@ -154,7 +156,7 @@ public class FLintHadoop {
                     fileTXT = new File(filePDF.getAbsolutePath()+".txt");
                     textExtractSuccess = PDFToText.process(filePDF, fileTXT);
                     generatedFiles.add(fileTXT.getName());
-                    checksums.put(fileTXT.getName(), Tools.generateChecksum(fileTXT.getAbsolutePath()));
+                    checksums.put(fileTXT.getName(), ChecksumUtil.generateChecksum(fileTXT.getAbsolutePath()));
                     LOGGER.debug("txt: {}, size: {}", fileTXT.getAbsolutePath(), fileTXT.length());
                 }
 
@@ -168,7 +170,7 @@ public class FLintHadoop {
                         FLint.printResults(results, pw);
                         pw.close();
                         generatedFiles.add(fileXML.getName());
-                        checksums.put(fileXML.getName(), Tools.generateChecksum(fileXML.getAbsolutePath()));
+                        checksums.put(fileXML.getName(), ChecksumUtil.generateChecksum(fileXML.getAbsolutePath()));
                         LOGGER.debug("xml: {}, size: {}", fileXML.getAbsolutePath(), fileXML.length());
                         Tools.zipGeneratedFiles(textExtractSuccess, checksums, generatedFiles, fileZIP.getAbsolutePath(), gTempDir.getAbsolutePath()+"/");
                         // clean up
@@ -251,7 +253,7 @@ public class FLintHadoop {
             super.cleanup(ctx);
             // clean up temp dir
             if (gTempDir.exists()) {
-                Tools.deleteDirectory(gTempDir);
+            	FileUtil.deleteDirectory(gTempDir);
             }
         }
 
