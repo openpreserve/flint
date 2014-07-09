@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
 import uk.bl.dpt.qa.flint.formats.PolicyAware;
 import uk.bl.dpt.qa.flint.formats.Format;
 
-import static uk.bl.dpt.qa.flint.FLint.getAvailableFormats;
+import static uk.bl.dpt.qa.flint.Flint.getAvailableFormats;
 
 /**
  * This class can be used to create a properties file from a schematron policy schema-file.
@@ -82,6 +82,8 @@ public class PolicyPropertiesCreator {
      * @param formatName the format's identifier (e.g. "PDF")
      * @return the created file
      * @throws IOException
+     * @throws InstantiationException 
+     * @throws IllegalAccessException 
      */
     public static Map<String, Map<String, Set<String>>> getPolicyMap(final String formatName) throws IOException, InstantiationException, IllegalAccessException {
         final Format format = getAvailableFormats().get(formatName);

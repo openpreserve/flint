@@ -25,7 +25,7 @@ import org.apache.hadoop.mrunit.types.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import uk.bl.dpt.qa.flint.FLint;
+import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.hadoop.FLintHadoop;
 
@@ -69,8 +69,8 @@ public class FlintHadoopTest {
         reduceDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
         mapRedDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
 
-        testPdf1CheckResult =  new FLint().check(new File(testPdf1Path)).get(0);
-        testPdf2CheckResult =  new FLint().check(new File(testPdf2Path)).get(0);
+        testPdf1CheckResult =  new Flint().check(new File(testPdf1Path)).get(0);
+        testPdf2CheckResult =  new Flint().check(new File(testPdf2Path)).get(0);
     }
 
     @Test

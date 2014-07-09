@@ -33,7 +33,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.bl.dpt.qa.flint.FLint;
+import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.converter.PDFToText;
 import uk.bl.dpt.qa.flint.wrappers.Tools;
@@ -87,7 +87,7 @@ public class FLintHadoop {
 
         private static FileSystem gFS = null;
         private static File gTempDir = null;
-        private static FLint gLint = null;
+        private static Flint gLint = null;
         private static Path gOutputDir = null;
 
         @Override
@@ -104,7 +104,7 @@ public class FLintHadoop {
             LOGGER.info("created new tempDir {} and it exists: {}", gTempDir, gTempDir.exists());
 
             try {
-                gLint = new FLint();
+                gLint = new Flint();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
@@ -167,7 +167,7 @@ public class FLintHadoop {
                         File fileXML = new File(filePDF.getAbsolutePath()+".report.xml");
                         File fileZIP = new File(filePDF.getAbsolutePath()+".zip");
                         PrintWriter pw = new PrintWriter(new FileWriter(fileXML));
-                        FLint.printResults(results, pw);
+                        Flint.printResults(results, pw);
                         pw.close();
                         generatedFiles.add(fileXML.getName());
                         checksums.put(fileXML.getName(), ChecksumUtil.generateChecksum(fileXML.getAbsolutePath()));
@@ -315,7 +315,7 @@ public class FLintHadoop {
     public static Text buildHeader(String format) throws Exception {
         Collection<String> header = new ArrayList<String>();
         header.addAll(Arrays.asList(CheckResult.fixedResultBits));
-        header.addAll(new FLint().getFormat(format).getAllCategoryNames());
+        header.addAll(new Flint().getFormat(format).getAllCategoryNames());
         return new Text(StringUtils.join(header, "\t"));
     }
 

@@ -37,9 +37,9 @@ import static uk.bl.dpt.utils.util.FileUtil.traverse;
 /**
  * A program to validate pluggable file formats.
  */
-public class FLint {
+public class Flint {
 
-    private static Logger gLogger = LoggerFactory.getLogger(FLint.class);
+    private static Logger gLogger = LoggerFactory.getLogger(Flint.class);
 
     private Collection<Format> formats = new HashSet<Format>();
 
@@ -47,7 +47,7 @@ public class FLint {
      * Create a new FLint object, adding an instance of all formats to the format list
      * for use by check()
      */
-    public FLint() throws IllegalAccessException, InstantiationException {
+    public Flint() throws IllegalAccessException, InstantiationException {
                          formats = getAvailableFormats().values();
                                                                               }
 
@@ -58,7 +58,7 @@ public class FLint {
      * This constructor can overwrite default policy properties if there are property
      * files in the specified `policyDir` that match the formats' file type.
      */
-    public FLint(File policyDir) throws IllegalAccessException, InstantiationException, IOException {
+    public Flint(File policyDir) throws IllegalAccessException, InstantiationException, IOException {
         formats = getAvailableFormats().values();
         for (Format f : formats) {
             if (f instanceof PolicyAware) {
@@ -85,7 +85,7 @@ public class FLint {
      * This constructor can overwrite default policy properties for each available format
      * if the supplied map contains a key with its name.
      */
-    public FLint(Map<String, Set<String>> policyMap) throws InstantiationException, IllegalAccessException {
+    public Flint(Map<String, Set<String>> policyMap) throws InstantiationException, IllegalAccessException {
         formats = getAvailableFormats().values();
         for (Format f : formats) {
             if (f instanceof PolicyAware) {
@@ -141,7 +141,7 @@ public class FLint {
         return results;
     }
 
-    public static List<List<CheckResult>> checkMany(File inputFile, FLint flint) throws InstantiationException, IllegalAccessException {
+    public static List<List<CheckResult>> checkMany(File inputFile, Flint flint) throws InstantiationException, IllegalAccessException {
         List<File> files = new LinkedList<File>();
         traverse(inputFile, files);
 
@@ -156,19 +156,18 @@ public class FLint {
     }
 
     public static List<List<CheckResult>> checkMany(File inputFile, File policyPropertiesDir) throws InstantiationException, IllegalAccessException, IOException {
-        FLint flint;
+        Flint flint;
         if (policyPropertiesDir != null) {
-            flint = new FLint(policyPropertiesDir);
+            flint = new Flint(policyPropertiesDir);
         } else {
-            flint = new FLint();
+            flint = new Flint();
         }
         return checkMany(inputFile, flint);
 
     }
 
-    @SuppressWarnings("unused")
     public static List<List<CheckResult>> checkMany(File inputFile, Map<String, Set<String>> policyMap) throws InstantiationException, IllegalAccessException, IOException {
-        return checkMany(inputFile, new FLint(policyMap));
+        return checkMany(inputFile, new Flint(policyMap));
     }
 
     /**
