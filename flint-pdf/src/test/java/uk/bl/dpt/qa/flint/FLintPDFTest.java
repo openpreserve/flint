@@ -28,13 +28,13 @@ import java.io.File;
 @SuppressWarnings("javadoc")
 public class FLintPDFTest {
 
-    private FLint drmlint;
+    private Flint drmlint;
 
     private static String DRM = FixedCategories.NO_DRM.toString();
 
     @Before
     public void setUp() throws Exception {
-                      drmlint = new FLint();
+                      drmlint = new Flint();
                                             }
 
     // pdfPolicyValidation tests on the same files as previous tests

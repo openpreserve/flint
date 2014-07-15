@@ -30,13 +30,13 @@ import java.io.File;
  */
 public class FLintEPUBTest {
 
-    private FLint flint;
+    private Flint flint;
     private static String DRM_EPUBCHECK = "DRMDetectionEpubCheck";
     private static String DRM_RIGHTSFILE = FixedCategories.NO_DRM_RIGHTS_FILE.toString();
 
     @Before
     public void setUp() throws Exception {
-        flint = new FLint();
+        flint = new Flint();
     }
 
     @Test
