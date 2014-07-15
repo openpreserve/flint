@@ -123,6 +123,7 @@ public class PDFBoxWrapper {
      * @param pFile the input file
      * @return the output-stream of the preflight validation (null if errors occurred).
      * @throws IOException
+     * @throws TransformerException 
      */
     public static ByteArrayOutputStream preflightToXml(File pFile) throws IOException, TransformerException {
         Element result = parser.validate(new FileDataSource(pFile));
@@ -178,7 +179,6 @@ public class PDFBoxWrapper {
 	 * @param pFile PDF file to load
 	 * @return whether the file loads and saves successfully or not
 	 */
-    @SuppressWarnings("unused")
 	public static boolean loadSavePDF(File pFile) {
 		boolean ret = false;
 

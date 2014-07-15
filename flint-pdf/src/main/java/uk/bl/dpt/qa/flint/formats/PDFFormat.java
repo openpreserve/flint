@@ -17,12 +17,25 @@
  */
 package uk.bl.dpt.qa.flint.formats;
 
-import uk.bl.dpt.qa.flint.checks.*;
-
 import javax.xml.transform.stream.StreamSource;
+
+import uk.bl.dpt.qa.flint.checks.CheckResult;
+import uk.bl.dpt.qa.flint.checks.FixedCategories;
+import uk.bl.dpt.qa.flint.checks.PDFPolicyValidation;
+import uk.bl.dpt.qa.flint.checks.SpecificDrmChecks;
+import uk.bl.dpt.qa.flint.checks.TimedValidation;
+import uk.bl.dpt.qa.flint.checks.WellformedTests;
+import uk.bl.dpt.utils.util.ResourceUtil;
+
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
+
 
 /**
  * PDF implementation of a Format. It uses schematron-based policy validation of apache preflight
@@ -42,7 +55,6 @@ import java.util.*;
  * - LockLizard and HYPrLock emcapsulate pdfs in to a different drm-ed format
  * - Seems most PDF DRM uses Adobe Digital Editions
  */
-@SuppressWarnings("unused")
 public class PDFFormat extends PolicyAware implements Format {
 
     private final static String SCH_POLICY = "/pdf-policy-validate/pdf_policy_preflight_test.sch";
@@ -50,7 +62,8 @@ public class PDFFormat extends PolicyAware implements Format {
     // when does a wrapper's task timeout [seconds]
     private final static long WRAPPER_TIMEOUT = 10 * 60;
 
-    @Override
+    @SuppressWarnings("serial")
+	@Override
     public Map<String, Map<String, Set<String>>> getFixedCategories() {
         final Set<String> noDRM = new TreeSet<String>() {{
             add("checkDRMPDFBoxAbsolute");
@@ -95,9 +108,9 @@ public class PDFFormat extends PolicyAware implements Format {
         }
         Long startTime = System.currentTimeMillis();
 
-        checkResult.addAll(TimedValidation.validate(new PolicyValidation(WRAPPER_TIMEOUT), contentFile));
+        checkResult.addAll(TimedValidation.validate(new PDFPolicyValidation(WRAPPER_TIMEOUT), contentFile));
         checkResult.addAll(TimedValidation.validate(new SpecificDrmChecks(WRAPPER_TIMEOUT, patternFilter), contentFile));
-        checkResult.addAll(TimedValidation.validate(new Wellformedness(WRAPPER_TIMEOUT, patternFilter), contentFile));
+        checkResult.addAll(TimedValidation.validate(new WellformedTests(WRAPPER_TIMEOUT, patternFilter), contentFile));
 
         checkResult.setTime(System.currentTimeMillis() - startTime);
         logger.info("all checks done for {}", this.getFormatName());
@@ -117,16 +130,16 @@ public class PDFFormat extends PolicyAware implements Format {
 
     @Override
     public String getVersion() {
-        return "0.0.6";
+        return "0.1.0";
     }
 
     @Override
     public InputStream getPolicy() {
-        return PDFFormat.getPolicyStatically();
+        return PDFFormat.getPolicyInputStream();
     }
 
-    public static InputStream getPolicyStatically() {
-        return PDFFormat.class.getResourceAsStream(SCH_POLICY);
+    public static InputStream getPolicyInputStream() {
+        return ResourceUtil.loadResource(SCH_POLICY);
     }
 
 }

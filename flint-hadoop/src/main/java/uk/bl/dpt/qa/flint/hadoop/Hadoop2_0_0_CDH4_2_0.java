@@ -29,12 +29,12 @@ public class Hadoop2_0_0_CDH4_2_0 implements HadoopVersion {
     protected static final String TASK_TIMEOUT = "mapred.task.timeout";
 
     @Override
-    public String linesPerMap() {
+    public String linesPerMapKey() {
         return LINES_PER_MAP;
     }
 
     @Override
-    public String taskTimeout() {
+    public String taskTimeoutKey() {
         return TASK_TIMEOUT;
     }
 }

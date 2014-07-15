@@ -25,8 +25,18 @@ package uk.bl.dpt.qa.flint.checks;
  *     'manually' to the dynamic list; these ones are the FixedCategories.
  */
 public enum FixedCategories {
-    WELL_FORMED("well-formed"),
+	
+	/**
+	 * Category for testing well-formedness
+	 */
+	WELL_FORMED("well-formed"),
+	/**
+	 * Category for checking for DRM
+	 */
     NO_DRM("specific-drm-checks"),
+    /**
+     * Category for validating against a policy
+     */
     POLICY_VALIDATION("policy-validation");
 
     private final String cat;
@@ -38,4 +48,5 @@ public enum FixedCategories {
     public String toString() {
         return cat;
     }
+    
 }

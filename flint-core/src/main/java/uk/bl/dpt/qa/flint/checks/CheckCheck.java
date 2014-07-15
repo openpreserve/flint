@@ -37,26 +37,50 @@ public class CheckCheck {
     private Boolean result; // can be null
     private Integer errorCount; // can be null
 
+    /**
+     * Construct a CheckCheck object
+     * @param name the name of this test
+     * @param result This represents the validation outcome from a policy validation 
+     * point of view, i.e. whether or not the outcome was satisfactory 
+     * @param errorCount count of times this defined check has failed
+     */
     public CheckCheck(String name, Boolean result, Integer errorCount) {
         this.name = name;
         this.result = result;
         this.errorCount = errorCount;
     }
 
+    /**
+     * Output this CheckCheck as a formatted XML String to a PrintWriter
+     * @param pw output
+     * @param shift (whitespace) padding output before XML
+     */
     public void toXML(PrintWriter pw, String shift) {
         pw.println(String.format("%s<check name='%s' result='%s'%s/>",
                 shift, name, getResult(),
                 (errorCount != null ? " errorCount='" + errorCount + "'" : "")));
     }
 
+    /**
+     * Ascertain whether or not this CheckCheck passed
+     * @return true/false, depending whether or not the test passes/fails
+     */
     public Boolean isHappy() {
         return this.result;
     }
 
+    /**
+     * Test whether or not a result has been stored for this check
+     * @return true if no result has been stored, otherwise false
+     */
     public boolean isErroneous() {
         return isHappy() == null;
     }
 
+    /**
+     * A String representation of the status of this CheckCheck
+     * @return "error", "passed" or "failed"
+     */
     public String getResult() {
         return this.isErroneous() ? "error" : this.isHappy() ? "passed" : "failed";
     }
@@ -64,10 +88,21 @@ public class CheckCheck {
     public String toString() {
         return this.name + ": " + getResult();
     }
+    
+    /**
+     * Get the name of this CheckCheck
+     * @return the name of this CheckCheck
+     */
     public String getName() {
         return this.name;
     }
+    
+    /**
+     * Get the error count of this CheckCheck
+     * @return the error count of this CheckCheck
+     */
     public Integer getErrorCount() {
         return this.errorCount;
     }
+    
 }

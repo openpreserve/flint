@@ -16,6 +16,7 @@
  *   limitations under the License.
  */
 import com.google.common.io.Files;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
@@ -25,9 +26,10 @@ import org.apache.hadoop.mrunit.types.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
-import uk.bl.dpt.qa.flint.hadoop.FLintHadoop;
+import uk.bl.dpt.qa.flint.hadoop.FlintHadoop;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,9 +44,9 @@ import static org.fest.assertions.Assertions.assertThat;
  */
 public class FlintHadoopTest {
 
-    MapDriver<LongWritable, Text, Text, FLintHadoop.MyRecord> mapDriver;
-    ReduceDriver<Text, FLintHadoop.MyRecord, Text, Text> reduceDriver;
-    MapReduceDriver<LongWritable, Text, Text, FLintHadoop.MyRecord, Text, Text> mapRedDriver;
+    MapDriver<LongWritable, Text, Text, FlintHadoop.CheckResultText> mapDriver;
+    ReduceDriver<Text, FlintHadoop.CheckResultText, Text, Text> reduceDriver;
+    MapReduceDriver<LongWritable, Text, Text, FlintHadoop.CheckResultText, Text, Text> mapRedDriver;
 
     final static String testPdf1Name = "encryption_openpassword.pdf";
     final static String testPdf1Path = FlintHadoopTest.class.getResource("/format_corpus/" + testPdf1Name).getPath();
@@ -59,8 +61,8 @@ public class FlintHadoopTest {
 
     @Before
     public void setUp() throws InstantiationException, IllegalAccessException {
-        FLintHadoop.Map mapper = new FLintHadoop.Map();
-        FLintHadoop.Reduce reducer = new FLintHadoop.Reduce();
+        FlintHadoop.Map mapper = new FlintHadoop.Map();
+        FlintHadoop.Reduce reducer = new FlintHadoop.Reduce();
         mapDriver = MapDriver.newMapDriver(mapper);
         reduceDriver = ReduceDriver.newReduceDriver(reducer);
         mapRedDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
@@ -79,10 +81,11 @@ public class FlintHadoopTest {
         assertOutputMatchesRecord(mapDriver.run().get(0), testPdf1CheckResult, testPdf1Name);
     }
 
-    @Test
+    @SuppressWarnings("serial")
+	@Test
     public void testReduce() throws IOException {
-        List<FLintHadoop.MyRecord> records = new ArrayList<FLintHadoop.MyRecord>() {{
-            add(new FLintHadoop.MyRecord(testPdf1CheckResult));
+        List<FlintHadoop.CheckResultText> records = new ArrayList<FlintHadoop.CheckResultText>() {{
+            add(new FlintHadoop.CheckResultText(testPdf1CheckResult));
         }};
         reduceDriver.withInput(new Text(testPdf1Name), records);
         List<Pair<Text, Text>> output = reduceDriver.run();

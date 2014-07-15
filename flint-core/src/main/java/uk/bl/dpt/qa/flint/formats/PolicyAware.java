@@ -55,9 +55,10 @@ public abstract class PolicyAware {
      * Validates the xml-report of the format-specific third-party validator using
      * the policy schematron file.
      *
-     *  @param resultToBeValidated a stream source representing the output of a third-party
+     * @param resultToBeValidated a stream source representing the output of a third-party
      *                             validation process
-     *  @return a report with resulting assertion errors and their frequency.
+     * @return a report with resulting assertion errors and their frequency.
+     * @throws Exception 
      */
     public static LinkedHashMap<String, CheckCategory> policyValidationResult(StreamSource resultToBeValidated, StreamSource schema) throws Exception {
         LinkedHashMap<String, CheckCategory> ccMap = new LinkedHashMap<String, CheckCategory>();

@@ -40,6 +40,12 @@ public class EpubCheckWrapper {
 
     private EpubCheckWrapper() {}
 
+    /**
+     * Check an epub file against a XmlReportWithMessageIds policy
+     * @param file file to check
+     * @return StreamSource of output report
+     * @throws IOException
+     */
     public static StreamSource check(File file) throws IOException {
         Report report = miniCache.get(file.getAbsolutePath());
         File reportFile = null;
@@ -54,4 +60,5 @@ public class EpubCheckWrapper {
         }
         return new StreamSource(reportFile);
     }
+    
 }

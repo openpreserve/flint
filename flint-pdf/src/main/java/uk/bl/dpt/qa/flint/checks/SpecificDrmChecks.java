@@ -37,9 +37,14 @@ public class SpecificDrmChecks extends TimedTask {
     private Logger logger;
     private Set<String> patternFilter;
 
-    public SpecificDrmChecks(long timeout, Set<String> patternFilter) {
-        super(FixedCategories.NO_DRM.toString(), timeout);
-        this.patternFilter = patternFilter;
+    /**
+     * Create a SpeficDRMChecks Object that times out if calls take longer than expected
+     * @param pTimeout timeout to use
+     * @param pPatternFilter
+     */
+    public SpecificDrmChecks(long pTimeout, Set<String> pPatternFilter) {
+        super(FixedCategories.NO_DRM.toString(), pTimeout);
+        this.patternFilter = pPatternFilter;
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 

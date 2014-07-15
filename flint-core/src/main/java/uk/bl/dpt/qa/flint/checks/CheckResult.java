@@ -44,16 +44,18 @@ public class CheckResult {
     private String version;
     private Long time; // can be null
 
-    // general information in a checkresult(.toMap), other then categories,
-    // always available
+    /**
+     * General information in a CheckResult(.toMap), other than categories,
+     * that are always available
+     */
     public static final String[] fixedResultBits = new String[]{
         "filename", "format", "version", "result", "timeTaken"
     };
 
-    LinkedHashMap<String, CheckCategory> categories;
+    private LinkedHashMap<String, CheckCategory> categories;
 
     /**
-     * inits a check-result
+     * Construct a CheckResult object
      *
      * @param filename name of the input file
      * @param format string representation of the format (e.g. "PDF", "EPUB", ..)
@@ -67,7 +69,7 @@ public class CheckResult {
     }
 
     /**
-     * inits a check-result with expected categories, which fills the keys of the categories map
+     * Initialise a CheckResult with expected categories, which fills the keys of the categories map
      * with their names.
      *
      * @param filename name of the input file
@@ -82,17 +84,27 @@ public class CheckResult {
         }
     }
 
+    /**
+     * Add CheckCategory to this CheckResult
+     * @param cc CheckCategory to add
+     */
     public void add(CheckCategory cc) {
         this.categories.put(cc.getName(), cc);
     }
+    
+    /**
+     * Add all CheckCatergory objects in the map to this CheckResult
+     * @param ccMap CheckCategorys to add
+     */
     public void addAll(LinkedHashMap<String, CheckCategory> ccMap) {
         this.categories.putAll(ccMap);
     }
 
     /**
-     * @return  --> true if *none* of the child-categories is unhappy and at least
-     * one child-category ran successfully and is happy, --> null if there aren't child
-     * categories at all or whether they report error(null) regarding their happiness,
+     * Test whether or not all the tests in this CheckResult were passed
+     * @return --> true if *none* of the child-categories is unhappy and at least
+     * one child-category ran successfully and is happy<br>
+     * --> null if there aren't child categories at all or whether they report error(null) regarding their happiness<br>
      * otherwise --> false.
      */
     public Boolean isHappy() {
@@ -105,6 +117,10 @@ public class CheckResult {
         return true;
     }
 
+    /**
+     * Find out if any CheckCategory in this CheckResult reports an error
+     * @return true if an error is contained in a CheckCategory within this CheckResult
+     */
     public boolean isErroneous() {
         for (CheckCategory cc : this.categories.values()) {
             if (!cc.isErroneous()) return false;
@@ -112,10 +128,21 @@ public class CheckResult {
         return true;
     }
 
+    /**
+     * A String representation of the status of this CheckResult
+     * @return "error", "passed" or "failed"
+     */
     public String getResult() {
         return this.isErroneous() ? "erroneous" : this.isHappy() ? "passed" : "failed";
     }
 
+
+    /**
+     * Output this CheckResult as a formatted XML String to a PrintWriter
+     * @param pw output
+     * @param shift (whitespace) padding output before CheckResult XML
+     * @param indent (whitespace) padding added to "shift" padding for any child CheckCategory output XML
+     */
     public void toXML(PrintWriter pw, String shift, String indent) {
         pw.println(String.format("%s<checkedFile name='%s' result='%s' format='%s' version='%s' totalCheckTime='%s'>",
                 shift, getFilename(), getResult(), getFormat(), getVersion(), getTimeTaken()));
@@ -125,6 +152,11 @@ public class CheckResult {
         pw.println(String.format("%s</checkedFile>", shift));
     }
 
+    /**
+     * Get the CheckCategory with the corresponding name
+     * @param catName name of the CheckCategory to retrieve
+     * @return the CheckCategory
+     */
     public CheckCategory get(String catName) {
         return categories.get(catName);
     }
@@ -140,6 +172,10 @@ public class CheckResult {
                 getFormat(), getVersion(), getFilename(), StringUtils.join(cats, ", "), getTimeTaken());
 	}
 
+    /**
+     * Get a Map containing String representations of the overall results of the CheckCategories (i.e. k:"testCategory", v:"passed")
+     * @return a Map containing String representations of the overall results of the CheckCategories
+     */
     public LinkedHashMap<String, String> toMap() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         for (String s : fixedResultBits) {
@@ -165,6 +201,7 @@ public class CheckResult {
 	public String getFilename() {
 		return this.filename;
 	}
+	
 	/**
 	 * Get format object used for the checks
 	 * @return name of format object
@@ -172,6 +209,7 @@ public class CheckResult {
 	public String getFormat() {
 		return this.format;
 	}
+	
 	/**
 	 * Version of format object used for the checks
 	 * @return Version of format object used for the checks
@@ -179,6 +217,7 @@ public class CheckResult {
 	public String getVersion() {
 		return this.version;
 	}
+	
 	/**
 	 * Get the time taken to execute tests (in ms)
 	 * @return time taken to execute tests (in ms)
@@ -186,7 +225,13 @@ public class CheckResult {
 	public String getTimeTaken() {
 		return Long.toString(this.time);
 	}
+	
+    /**
+     * Set the time taken to execute tests (in ms)
+     * @param time the time taken to execute tests (in ms)
+     */
     public void setTime(Long time) {
         this.time = time;
     }
+    
 }

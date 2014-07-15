@@ -24,6 +24,7 @@ import uk.bl.dpt.qa.flint.wrappers.CalibreWrapper;
 import uk.bl.dpt.qa.flint.wrappers.EpubCheckWrapper;
 
 import javax.xml.transform.stream.StreamSource;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +44,8 @@ public class EPUBFormat extends PolicyAware implements Format {
 
     private Set<String> patternFilter = null;
 
-    @Override
+    @SuppressWarnings("serial")
+	@Override
     public Map<String, Map<String, Set<String>>> getFixedCategories() {
         final Set<String> noDRM = new TreeSet<String>() {{
             add("checkForRightsFile");

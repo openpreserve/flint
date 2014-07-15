@@ -22,7 +22,16 @@ package uk.bl.dpt.qa.flint.hadoop;
  */
 public interface HadoopVersion {
 
-    public String linesPerMap();
+    /**
+     * Key for modifying number of lines per map 
+     * @return key
+     */
+    public String linesPerMapKey();
 
-    public String taskTimeout();
+    /**
+     * Key for modifying the task timeout length
+     * @return key
+     */
+    public String taskTimeoutKey();
+    
 }

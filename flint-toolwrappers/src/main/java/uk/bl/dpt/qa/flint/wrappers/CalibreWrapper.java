@@ -40,9 +40,16 @@ public class CalibreWrapper {
     private static String gVersion = null;
     private static List<String> CALIBRE_CONVERT = null;
 
+    /**
+     * Exception for when Calibre is missing 
+     */
     public static class CalibreMissingException extends Exception {
-        private static String message = ("Can't run Calibre as it is not available; " +
+		private static final long serialVersionUID = 733393948514391781L;
+		private static String message = ("Can't run Calibre as it is not available; " +
                                   "this method should not be run without Calibre being installed");
+        /**
+         * Create a default CalibreMissingException
+         */
         public CalibreMissingException() {
             super(message);
         }
@@ -55,7 +62,8 @@ public class CalibreWrapper {
 
     static {
         // TODO: make pathToCalibre a property or a command-line arg?
-        Map<String, String> osMap = new HashMap<String, String>() {{
+        @SuppressWarnings("serial")
+		Map<String, String> osMap = new HashMap<String, String>() {{
             put("windows", "c:/bin/calibre/calibre2/" + "ebook-convert.exe");
             put("linux",  "/usr/bin/" + "ebook-convert");
         }};
@@ -89,6 +97,10 @@ public class CalibreWrapper {
         return CALIBRE_CONVERT != null;
     }
 
+    /**
+     * Initialise the Calibre version number
+     * @throws CalibreMissingException
+     */
 	private static void getVer() throws CalibreMissingException {
         if (CALIBRE_CONVERT == null && !calibreIsAvailable()) {
             throw new CalibreMissingException();
@@ -111,6 +123,7 @@ public class CalibreWrapper {
 	/**
 	 * Get the version of Calibre
 	 * @return version string from Calibre
+	 * @throws CalibreMissingException in case Calibre is missing
 	 */
 	public static String getVersion() throws CalibreMissingException {
 		if(null==gVersion) getVer();
@@ -122,6 +135,7 @@ public class CalibreWrapper {
 	 * @param pOriginal original file
 	 * @param pType type to convert to (e.g. "epub" or "mobi")
 	 * @return File for converted ebook (or null if error)
+	 * @throws CalibreMissingException in case Calibre is missing
 	 */
 	public static File convertEbook(File pOriginal, String pType) throws CalibreMissingException {
         if (CALIBRE_CONVERT == null && !calibreIsAvailable()) {
@@ -153,6 +167,7 @@ public class CalibreWrapper {
 	 * Check to see if the file is valid by trying to convert to text
 	 * @param pFile file to check
 	 * @return true if valid (i.e. can be converted to text)
+	 * @throws CalibreMissingException in case Calibre is missing
 	 */
 	public static boolean isValid(File pFile) throws CalibreMissingException {
         if (CALIBRE_CONVERT == null && !calibreIsAvailable()) {
@@ -201,6 +216,7 @@ public class CalibreWrapper {
 	 * @param pOutput output file
 	 * @param pOverwrite whether or not to overwrite an existing output file
 	 * @return true if converted ok, otherwise false
+	 * @throws CalibreMissingException in case Calibre is missing
 	 */
 	public static boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) throws CalibreMissingException {
 		if(pOutput.exists()&(!pOverwrite)) return false;

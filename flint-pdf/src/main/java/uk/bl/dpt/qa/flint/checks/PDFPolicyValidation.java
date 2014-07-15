@@ -32,11 +32,15 @@ import java.util.LinkedHashMap;
  * Wrapper around the policy-validation process that produces an error message
  * in case of a timing out after PDFFormat#Wrapper_TIMEOUT seconds.
  */
-public class PolicyValidation extends TimedTask  {
+public class PDFPolicyValidation extends TimedTask  {
 
     private Logger logger;
 
-    public PolicyValidation(long timeout) {
+    /**
+     * Create a new PDFPolicyValidation Object
+     * @param timeout length of time before PDFBoxWrapper is timed out
+     */
+    public PDFPolicyValidation(long timeout) {
         super(FixedCategories.POLICY_VALIDATION.toString(), timeout);
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
@@ -46,7 +50,7 @@ public class PolicyValidation extends TimedTask  {
         logger.info("Performing a policy validation on {}", contentFile);
         ByteArrayOutputStream outputXml = PDFBoxWrapper.preflightToXml(contentFile);
         return PolicyAware.policyValidationResult(new StreamSource(new ByteArrayInputStream(outputXml.toByteArray())),
-                new StreamSource(PDFFormat.getPolicyStatically()));
+                new StreamSource(PDFFormat.getPolicyInputStream()));
     }
 
 }

@@ -160,6 +160,8 @@ public class PolicyPropertiesCreator {
      * @param formatName the format's identifier (e.g. "PDF")
      * @return the created file
      * @throws IOException
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     public static File create(String pathToPropertiesFile, String formatName) throws IOException, IllegalAccessException, InstantiationException {
         // where to write the properties to

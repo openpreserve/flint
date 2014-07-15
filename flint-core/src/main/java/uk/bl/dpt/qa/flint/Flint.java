@@ -46,6 +46,8 @@ public class Flint {
     /**
      * Create a new FLint object, adding an instance of all formats to the format list
      * for use by check()
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     public Flint() throws IllegalAccessException, InstantiationException {
                          formats = getAvailableFormats().values();
@@ -57,6 +59,9 @@ public class Flint {
      *
      * This constructor can overwrite default policy properties if there are property
      * files in the specified `policyDir` that match the formats' file type.
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
+     * @throws IOException 
      */
     public Flint(File policyDir) throws IllegalAccessException, InstantiationException, IOException {
         formats = getAvailableFormats().values();
@@ -84,6 +89,8 @@ public class Flint {
      *
      * This constructor can overwrite default policy properties for each available format
      * if the supplied map contains a key with its name.
+     * @throws InstantiationException 
+     * @throws IllegalAccessException 
      */
     public Flint(Map<String, Set<String>> policyMap) throws InstantiationException, IllegalAccessException {
         formats = getAvailableFormats().values();

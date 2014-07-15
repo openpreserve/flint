@@ -36,11 +36,13 @@ public class XmlReportWithMessageIds extends XmlReportImpl {
 
     @Override
     public void message(Message message, MessageLocation location, Object... arg) {
-        class MyMessage extends Message {
+
+    	class MyMessage extends Message {
             public MyMessage(MessageId messageId, Severity severity, String message, String suggestion) {
                 super(messageId, severity, messageId.name(), suggestion);
             }
         }
+        
         Message myMessage = new MyMessage(message.getID(), message.getSeverity(), message.getMessage(), message.getSuggestion());
         super.message(myMessage, location, arg);
     }

@@ -56,28 +56,39 @@ import java.util.*;
  *
  * It uses the 'new' API introduced since version 0.20.x.
  *
- * 20140113 - increased client heap size to 2gb as getting heap space errors
  */
-public class FLintHadoop {
+public class FlintHadoop {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(FLintHadoop.class);
-    private static HadoopVersion hVersion = new Hadoop2_0_0_CDH4_2_0();
+    private static Logger LOGGER = LoggerFactory.getLogger(FlintHadoop.class);
+    private static HadoopVersion gHadoopVersion = new Hadoop2_0_0_CDH4_2_0();
 
-    public static class MyRecord extends Text {
+    /**
+     * Convert a CheckResult to a Text Object for output
+     * @author wpalmer
+     */
+    public static class CheckResultText extends Text {
 
-        public MyRecord(CheckResult result) {
-            super(StringUtils.join(result.toMap().values(), "\t"));
+        /**
+         * Construct a Text Object from a CheckResult
+         * @param pResult CheckResult to use for output
+         */
+        public CheckResultText(CheckResult pResult) {
+            super(StringUtils.join(pResult.toMap().values(), "\t"));
         }
 
-        public MyRecord() {
+        /**
+         * Construct an empty CheckResultText
+         */
+        public CheckResultText() {
             super("");
         }
 
     }
+    
     /**
-     *
+     * Map class
      */
-    public static class Map extends Mapper<LongWritable, Text, Text, MyRecord> {
+    public static class Map extends Mapper<LongWritable, Text, Text, CheckResultText> {
 
         // TODO: deal with these debug switches
         private static final boolean extractText = false;
@@ -85,16 +96,16 @@ public class FLintHadoop {
         private static final boolean zipFlint = false;
         private static boolean textExtractSuccess = false;
 
-        private static FileSystem gFS = null;
-        private static File gTempDir = null;
-        private static Flint gLint = null;
-        private static Path gOutputDir = null;
+        private FileSystem gFS = null;
+        private File gTempDir = null;
+        private Flint gLint = null;
+        private Path gOutputDir = null;
 
         @Override
-        public void setup(Context ctx) throws IOException, InterruptedException {
-            super.setup(ctx);
+        public void setup(Context pContext) throws IOException, InterruptedException {
+            super.setup(pContext);
             try {
-                gFS = FileSystem.get(ctx.getConfiguration());
+                gFS = FileSystem.get(pContext.getConfiguration());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -111,14 +122,14 @@ public class FLintHadoop {
                 e.printStackTrace();
             }
 
-            gOutputDir = new Path(ctx.getConfiguration().get("mapred.output.dir"));
+            gOutputDir = new Path(pContext.getConfiguration().get("mapred.output.dir"));
 
         }
 
 
         @Override
-        public void cleanup(Context ctx) throws IOException, InterruptedException {
-            super.cleanup(ctx);
+        public void cleanup(Context pContext) throws IOException, InterruptedException {
+            super.cleanup(pContext);
 
             // clean up temp dir
             if (gTempDir.exists()) {
@@ -128,12 +139,11 @@ public class FLintHadoop {
         }
 
         @Override
-        public void map(LongWritable key, Text value, Context ctx) throws IOException, InterruptedException {
+        public void map(LongWritable pKey, Text pValue, Context pContext) throws IOException, InterruptedException {
 
             try {
-                //ctx.getCounter(SkipBadRecords.COUNTER_MAP_PROCESSED_RECORDS, "1");
                 // load file from HDFS
-                Path hdfsFile = new Path(value.toString());
+                Path hdfsFile = new Path(pValue.toString());
                 File filePDF = new File(gTempDir.getAbsolutePath()+"/"+hdfsFile.getName());
 
                 List<String> generatedFiles = new LinkedList<String>();
@@ -185,12 +195,12 @@ public class FLintHadoop {
                     }
                 }
 
-                ctx.write(new Text(results.get(0).getFilename()), new MyRecord(results.get(0)));
+                pContext.write(new Text(results.get(0).getFilename()), new CheckResultText(results.get(0)));
 
             } catch(Exception e) {
                 // TODO: is this what we want?:
                 LOGGER.error("Caught Exception: {}", e);
-                ctx.write(new Text("Exception: " + value.toString() + " " + e.getMessage()), new MyRecord());
+                pContext.write(new Text("Exception: " + pValue.toString() + " " + e.getMessage()), new CheckResultText());
             }
 
         }
@@ -200,19 +210,17 @@ public class FLintHadoop {
     /**
      * Generate an overall report csv
      */
-    public static class Reduce extends Reducer<Text, MyRecord, Text, Text> {
+    public static class Reduce extends Reducer<Text, CheckResultText, Text, Text> {
 
-        private static FileSystem gFS = null;
-        private static Path outputDir = null;
-        private static File gTempDir = null;
-
-        //private static String gInputDir = null;
+        private FileSystem gFS = null;
+        private Path outputDir = null;
+        private File gTempDir = null;
 
         @Override
-        public void setup(Context ctx) throws IOException, InterruptedException {
-            super.setup(ctx);
+        public void setup(Context pContext) throws IOException, InterruptedException {
+            super.setup(pContext);
             try {
-                gFS = FileSystem.get(ctx.getConfiguration());
+                gFS = FileSystem.get(pContext.getConfiguration());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -221,25 +229,7 @@ public class FLintHadoop {
             gTempDir = Tools.newTempDir();
             LOGGER.debug("created new tempDir {} and it exists: {}", gTempDir, gTempDir.exists());
 
-        //    gInputDir = ctx.getConfiguration().get("mapred.output.dir");
-
-        //}
-
-        //private static InputStream recoverStreamThatEndsWith(InputStream zipfile, String file) throws IOException {
-        //    ZipInputStream zip = new ZipInputStream(zipfile);
-        //    ZipEntry ze = null;
-        //    while (zip.available() > 0) {
-        //        ze = zip.getNextEntry();
-        //        if (ze != null) {
-        //            if (ze.getName().endsWith(file)) {
-        //                return zip;
-        //            }
-        //        }
-        //    }
-        //    return null;
-        // }
-
-            outputDir = new Path(ctx.getConfiguration().get("mapred.output.dir"));
+            outputDir = new Path(pContext.getConfiguration().get("mapred.output.dir"));
 
             try {
                 writeHeader("PDF");
@@ -249,8 +239,8 @@ public class FLintHadoop {
         }
 
         @Override
-        public void cleanup(Context ctx) throws IOException, InterruptedException {
-            super.cleanup(ctx);
+        public void cleanup(Context pContext) throws IOException, InterruptedException {
+            super.cleanup(pContext);
             // clean up temp dir
             if (gTempDir.exists()) {
             	FileUtil.deleteDirectory(gTempDir);
@@ -261,26 +251,26 @@ public class FLintHadoop {
         /**
          * Writes the header of the format-specific tabular data to its own file.
          *
-         * @param format the string representation of the format (e.g. "PDF", "EPUB",..)
+         * @param pFormat the string representation of the format (e.g. "PDF", "EPUB",..)
          * @throws Exception
          */
-        private void writeHeader(String format) throws Exception {
-            File headerFile = new File(gTempDir, "header_for_" + format);
+        private void writeHeader(String pFormat) throws Exception {
+            File headerFile = new File(gTempDir, "header_for_" + pFormat);
             if (!headerFile.exists()) {
                 Path headerFileHDFS = new Path(outputDir, headerFile.getName());
                 if (!gFS.exists(headerFileHDFS)) {
-                    FileUtils.write(headerFile, "filename\t" + FLintHadoop.buildHeader(format));
+                    FileUtils.write(headerFile, "filename\t" + FlintHadoop.buildHeader(pFormat));
                     gFS.copyFromLocalFile(false, false, new Path(headerFile.getAbsolutePath()), headerFileHDFS);
                 }
             }
         }
 
         @Override
-        public void reduce(Text key, Iterable<MyRecord> values, Context ctx)
+        public void reduce(Text pKey, Iterable<CheckResultText> pValues, Context pContext)
                 throws IOException, InterruptedException {
 
-            if (key.toString().startsWith("Exception")) {
-                ctx.write(key, new MyRecord());
+            if (pKey.toString().startsWith("Exception")) {
+                pContext.write(pKey, new CheckResultText());
             } else {
                 //InputStream zipStream = gFS.open(new Path(gInputDir+"/"+key));
                 //if(zipStream!=null) {
@@ -299,8 +289,8 @@ public class FLintHadoop {
                 //            return;
                 //        }
                 //    }
-                for (MyRecord record : values) {
-                    ctx.write(new Text(key), record);
+                for (CheckResultText record : pValues) {
+                    pContext.write(new Text(pKey), record);
                 }
             }
         }
@@ -319,6 +309,13 @@ public class FLintHadoop {
         return new Text(StringUtils.join(header, "\t"));
     }
 
+    /**
+     * Test main method
+     * @param args
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
 
         // set up the configuration
@@ -327,15 +324,15 @@ public class FLintHadoop {
         Configuration conf = new Configuration();
 
         // ***** list of config parameters, verified to work *****
-        conf.setInt(hVersion.linesPerMap(), 50);
+        conf.setInt(gHadoopVersion.linesPerMapKey(), 50);
         // 60 * 60 * 1000ms == 1h; this is very long but necessary for some files :-(
-        conf.set(hVersion.taskTimeout(), Integer.toString(60 * 60 * 1000));
+        conf.set(gHadoopVersion.taskTimeoutKey(), Integer.toString(60 * 60 * 1000));
 
         // set up the job
         // String to use for name and output folder in HDFS
         String name = "FLintHadoop_"+System.currentTimeMillis();
         Job job = new Job(conf, name);
-        job.setJarByClass(FLintHadoop.class);
+        job.setJarByClass(FlintHadoop.class);
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(name));
         //set the mapper to this class' mapper
@@ -346,7 +343,7 @@ public class FLintHadoop {
         //sets how the output is written cf. OutputFormat
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(MyRecord.class);
+        job.setOutputValueClass(CheckResultText.class);
         // TODO: shouldn't the number of allowed tasks be set in the config on the cluster,
         //       as it's sensitive to the hardware setup rather than to this code?
         job.setNumReduceTasks(28);

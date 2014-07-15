@@ -47,6 +47,7 @@ public interface Format {
     /**
      * @return all category names expected for the specific instance of a
      * implementation of this format.
+     * @throws Exception 
      */
     public Collection<String> getAllCategoryNames() throws Exception;
 
