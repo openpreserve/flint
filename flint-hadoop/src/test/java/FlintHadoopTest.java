@@ -59,6 +59,11 @@ public class FlintHadoopTest {
     static CheckResult testPdf1CheckResult;
     static CheckResult testPdf2CheckResult;
 
+    /**
+     * Set up the FilntHadoop tests
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     @Before
     public void setUp() throws InstantiationException, IllegalAccessException {
         FlintHadoop.Map mapper = new FlintHadoop.Map();
@@ -75,12 +80,22 @@ public class FlintHadoopTest {
         testPdf2CheckResult =  new Flint().check(new File(testPdf2Path)).get(0);
     }
 
+    /**
+     * Test the Map class
+     * @throws IOException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testMap() throws IOException, InstantiationException, IllegalAccessException {
         mapDriver.withInput(new LongWritable(0), new Text(testPdf1Path));
         assertOutputMatchesRecord(mapDriver.run().get(0), testPdf1CheckResult, testPdf1Name);
     }
 
+    /**
+     * Test the Reduce class
+     * @throws IOException
+     */
     @SuppressWarnings("serial")
 	@Test
     public void testReduce() throws IOException {
@@ -93,6 +108,10 @@ public class FlintHadoopTest {
         assertOutputMatchesRecord(output.get(0), testPdf1CheckResult, testPdf1Name);
     }
 
+    /**
+     * Test the Map and Reduce classes together
+     * @throws Exception
+     */
     @Test
     public void testMapReduce() throws Exception {
         mapRedDriver.withInput(new LongWritable(0), new Text(testPdf1Path));

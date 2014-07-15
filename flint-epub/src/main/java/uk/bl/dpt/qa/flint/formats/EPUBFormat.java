@@ -42,8 +42,6 @@ public class EPUBFormat extends PolicyAware implements Format {
 
     private final static String SCH_POLICY = "/epubcheck-policy-validation/minimal.sch";
 
-    private Set<String> patternFilter = null;
-
     @SuppressWarnings("serial")
 	@Override
     public Map<String, Map<String, Set<String>>> getFixedCategories() {
@@ -78,6 +76,7 @@ public class EPUBFormat extends PolicyAware implements Format {
     @Override
     public CheckResult validationResult(File contentFile) {
         CheckResult checkResult = null;
+        
         try {
             checkResult = new CheckResult(contentFile.getName(), this.getFormatName(), this.getVersion(), getAllCategoryNames());
         } catch (Exception e) {
@@ -98,11 +97,15 @@ public class EPUBFormat extends PolicyAware implements Format {
             logger.error("Caught exception: {}", e.getMessage());
         }
 
-
         checkResult.setTime(System.currentTimeMillis() - startTime);
         return checkResult;
     }
 
+    /**
+     * Run DRM checks against an EPUB file
+     * @param pEPUB file to check
+     * @return a CheckCategory containing results from specificDRMChecks tests     
+     */
     public CheckCategory specificDRMChecks(File pEPUB) {
 
         CheckCategory cc = new CheckCategory(FixedCategories.NO_DRM_RIGHTS_FILE.toString());
@@ -124,19 +127,21 @@ public class EPUBFormat extends PolicyAware implements Format {
 
     @Override
     public String getFormatName() {
-                                        return "EPUB";
-                                                                  }
+    	return "EPUB";
+    }
 
     @Override
     public String getVersion() {
-                                     return "0.0.6";
-                                                                }
+    	return "0.1.0";
+    }
 
     /**
      * This check used EpubCheck - according to it, none of the test files (from Adobe/Google/etc)
      * are valid.  This poses an issue as to what is technically valid and what is ok.
      * NOTE: this uses a new EpubCheck object, as does containsDRM(), so may be able to speed it up
      * but object is on-per-DRMLint, not one-per-input-file.
+     * @param pFile file to check
+     * @return a CheckCategory containing results from isWellFormed tests
      */
     public CheckCategory isWellFormed(File pFile) {
 

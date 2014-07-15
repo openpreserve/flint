@@ -32,13 +32,23 @@ public abstract class TimedTask implements Callable<LinkedHashMap<String, CheckC
     protected File contentFile;
     protected long timeout;
 
+    /**
+     * Create a new TimedTask object
+     * @param name name of the task
+     * @param timeout timeout before task is terminated
+     */
     public TimedTask(String name, long timeout) {
         super();
         this.name = name;
         this.timeout = timeout;
     }
 
+    /**
+     * Set the file that will be used by the TimedTask
+     * @param contentFile file to be used by the TimedTask
+     */
     public void setContentFile(File contentFile) {
         this.contentFile = contentFile;
     }
+    
 }

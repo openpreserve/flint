@@ -44,11 +44,18 @@ public abstract class PolicyAware {
     protected static Set<String> patternFilter = null;
     private static ValidatorFactory valFac;
 
+    /**
+     * Create a new PolicyAware object
+     */
     public PolicyAware() {
         logger = LoggerFactory.getLogger(getClass());
         valFac = new ValidatorFactory();
     }
 
+    /**
+     * Get an InputStream that represents the policy to check against
+     * @return InputStream that represents the policy to check against
+     */
     abstract public InputStream getPolicy();
 
     /**
@@ -118,6 +125,13 @@ public abstract class PolicyAware {
         patternFilter = pFilter;
     }
 
+    /**
+     * @return
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws XPathExpressionException
+     * @throws IOException
+     */
     public Collection<String> requestPolicyPatternNames(StreamSource schema) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         return valFac.getPatternNames(schema, patternFilter);
     }

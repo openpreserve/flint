@@ -21,7 +21,14 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -31,7 +38,6 @@ import uk.bl.dpt.qa.flint.formats.Format;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.formats.PolicyAware;
 import uk.bl.dpt.qa.flint.wrappers.TikaWrapper;
-
 import static uk.bl.dpt.utils.util.FileUtil.traverse;
 
 /**
@@ -59,6 +65,7 @@ public class Flint {
      *
      * This constructor can overwrite default policy properties if there are property
      * files in the specified `policyDir` that match the formats' file type.
+     * @param policyDir directory containing policy files ("formatName-policy.properties")
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      * @throws IOException 

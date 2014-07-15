@@ -42,6 +42,12 @@ public class TimedValidation {
 
     private TimedValidation(){}
 
+    /**
+     * Run a timed validation of a TimedTask against a file
+     * @param task task to run
+     * @param contentFile file to run against the TimedTask
+     * @return output from the TimedTask
+     */
     public static LinkedHashMap<String, CheckCategory> validate(TimedTask task, File contentFile) {
         executor = Executors.newSingleThreadExecutor();
         task.setContentFile(contentFile);
