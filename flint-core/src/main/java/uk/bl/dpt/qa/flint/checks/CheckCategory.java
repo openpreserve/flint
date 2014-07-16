@@ -20,6 +20,8 @@ package uk.bl.dpt.qa.flint.checks;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_XML10;
+
 /**
  * A set of CheckCategories together forms a
  * {@link uk.bl.dpt.qa.flint.checks.CheckResult}, each category is a container
@@ -99,7 +101,7 @@ public class CheckCategory {
      */
     public void toXML(PrintWriter pw, String shift, String indent) {
         pw.println(String.format("%s<checkCategory name='%s' result='%s'>",
-                shift, name, getResult()));
+                shift, ESCAPE_XML10.translate(name), getResult()));
         for (CheckCheck check : checks.values()) {
             check.toXML(pw, shift + indent);
         }

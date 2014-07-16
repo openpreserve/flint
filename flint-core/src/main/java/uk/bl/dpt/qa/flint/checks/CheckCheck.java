@@ -19,6 +19,8 @@ package uk.bl.dpt.qa.flint.checks;
 
 import java.io.PrintWriter;
 
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_XML10;
+
 /**
  * A CheckCheck is the lowest level test in a validation process. It belongs to
  * a * {@link uk.bl.dpt.qa.flint.checks.CheckCategory}.
@@ -57,7 +59,7 @@ public class CheckCheck {
      */
     public void toXML(PrintWriter pw, String shift) {
         pw.println(String.format("%s<check name='%s' result='%s'%s/>",
-                shift, name, getResult(),
+                shift, ESCAPE_XML10.translate(name), getResult(),
                 (errorCount != null ? " errorCount='" + errorCount + "'" : "")));
     }
 

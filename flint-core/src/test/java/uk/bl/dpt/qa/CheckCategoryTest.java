@@ -21,6 +21,9 @@ import org.junit.Test;
 import uk.bl.dpt.qa.flint.checks.CheckCategory;
 import uk.bl.dpt.qa.flint.checks.CheckCheck;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+
 import static org.fest.assertions.Assertions.assertThat;
 
 
@@ -74,4 +77,18 @@ public class CheckCategoryTest {
         assertThat(cc.isErroneous()).isEqualTo(false);
     }
 
-}
+
+    @Test
+    public void testToXMLAndFunnyCharacters() {
+        // create a result with a single quote in the name
+        CheckCategory cc = new CheckCategory("Funny characters: $%&");
+        cc.add(new CheckCheck("Even here: @¬?", false, null));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintWriter pw = new PrintWriter(output);
+        cc.toXML(pw, "", "");
+        pw.close();
+        assertThat(output.toString())
+                .startsWith("<checkCategory name='Funny characters: $%&amp;' result='failed'>")
+                .contains("<check name='Even here: @¬?' result='failed'/>")
+                .endsWith(String.format("</checkCategory>%n"));
+    }}
