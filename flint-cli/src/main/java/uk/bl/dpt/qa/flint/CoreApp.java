@@ -81,28 +81,29 @@ public class CoreApp {
                 output = new File(outputDefault);
             }
 
-            File inputFile = new File(ns.getString("input"));
-            if (!inputFile.exists()) {
-                String f =  (inputFile.isDirectory() ? "directory" : "file");
-                System.out.println("Input " + f + " " + inputFile + " not found.");
-                System.exit(1);
+            try (PrintWriter out = new PrintWriter(new FileWriter(output))) {
+                File inputFile = new File(ns.getString("input"));
+                if (!inputFile.exists()) {
+                    String f =  (inputFile.isDirectory() ? "directory" : "file");
+                    System.out.println("Input " + f + " " + inputFile + " not found.");
+                    System.exit(1);
+                }
+                List<List<CheckResult>> resultCollection;
+                String ppd = ns.getString("policy_properties_dir");
+                if (ppd != null) {
+                    resultCollection = FLint.checkMany(inputFile, new File(ppd));
+                } else {
+                    resultCollection = FLint.checkMany(inputFile, new FLint());
+                }
+                for (List<CheckResult> results : resultCollection) {
+                    FLint.printResults(results, out);
+                }
+                LOGGER.info("DONE.");
+                System.out.println("\ndone. results written to " + output);
+            } catch (IOException e) {
+                LOGGER.error("can't write results: {}", e);
+                System.exit(-1);
             }
-            PrintWriter out;
-            List<List<CheckResult>> resultCollection;
-            String ppd = ns.getString("policy_properties_dir");
-            if (ppd != null) {
-                resultCollection = Flint.checkMany(inputFile, new File(ppd));
-            } else {
-                resultCollection = Flint.checkMany(inputFile, new Flint());
-            }
-            out = new PrintWriter(new FileWriter(output));
-            for (List<CheckResult> results : resultCollection) {
-                Flint.printResults(results, out);
-            }
-            out.close();
-            LOGGER.info("DONE.");
-            System.out.println("\ndone. results written to " + output);
-            //System.exit(0);
         } catch (ArgumentParserException e) {
             if (args.length == 0) {
                 parser.printHelp();
@@ -110,18 +111,16 @@ public class CoreApp {
                 parser.handleError(e);
             }
             System.exit(1);
-        } catch (IOException e) {
-            LOGGER.error("can't write results: {}", e);
-            System.exit(-1);
-        } catch (InstantiationException e) {
-            LOGGER.error(e.getMessage());
-            System.exit(-1);
-        } catch (IllegalAccessException e) {
+
+        } catch (InstantiationException | IllegalAccessException e) {
             LOGGER.error(e.getMessage());
             System.exit(-1);
         }
     }
 
+    /**
+     * @return the version of the current jvm
+     */
     static double getJavaVersion () {
         String version = System.getProperty("java.version");
         return Double.parseDouble(StringUtils.join(ArrayUtils.subarray(version.split("\\."), 0, 2), "."));
