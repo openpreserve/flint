@@ -45,7 +45,7 @@
         <commons-lang3.version>3.3.1</commons-lang3.version>
         <controlsfx.version>8.0.5</controlsfx.version>
         <cucumber.version>1.1.6</cucumber.version>
-        <dptutils.version>0.0.1</dptutils.version>
+        <dptutils.version>0.0.2-SNAPSHOT</dptutils.version>
         <epubcheck.version>v4.0.0-alpha2</epubcheck.version>
         <fest-assert.version>1.4</fest-assert.version>
         <guava.version>17.0</guava.version>

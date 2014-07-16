@@ -29,7 +29,7 @@ import uk.bl.dpt.qa.flint.utils.PolicyPropertiesCreator;
 import java.io.File;
 import java.util.Map;
 
-import static uk.bl.dpt.qa.flint.FLint.getAvailableFormats;
+import static uk.bl.dpt.qa.flint.Flint.getAvailableFormats;
 
 /**
  * Generates a properties file from a schematron policy of a given format in the directory

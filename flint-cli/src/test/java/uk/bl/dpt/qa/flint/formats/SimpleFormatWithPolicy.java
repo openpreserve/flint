@@ -6,7 +6,6 @@ import uk.bl.dpt.qa.flint.checks.*;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 

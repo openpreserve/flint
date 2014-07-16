@@ -18,17 +18,14 @@
 package uk.bl.dpt.qa.flint;
 
 import com.google.common.io.Files;
-import cucumber.api.PendingException;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.apache.commons.io.FileUtils;
-import uk.bl.dpt.qa.flint.formats.Format;
 import uk.bl.dpt.qa.flint.formats.SimpleFormatNoPolicy;
 import uk.bl.dpt.qa.flint.formats.SimpleFormatWithPolicy;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.Charset;
 

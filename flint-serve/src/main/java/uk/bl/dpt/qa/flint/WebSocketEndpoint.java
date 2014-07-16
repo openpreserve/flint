@@ -94,7 +94,7 @@ public class WebSocketEndpoint {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintWriter pw = new PrintWriter(output);
         try {
-            FLint.printResults(new FLint().check(inputF.toFile()), pw);
+            Flint.printResults(new Flint().check(inputF.toFile()), pw);
             LOGGER.info("done with linting");
         } catch (Exception e) {
             LOGGER.error(e.getMessage());

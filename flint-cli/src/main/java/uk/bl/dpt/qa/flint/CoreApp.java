@@ -35,7 +35,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
-import static uk.bl.dpt.qa.flint.FLint.getAvailableFormats;
+import static uk.bl.dpt.qa.flint.Flint.getAvailableFormats;
 
 /**
  * Command line user interface for flint
@@ -91,13 +91,13 @@ public class CoreApp {
             List<List<CheckResult>> resultCollection;
             String ppd = ns.getString("policy_properties_dir");
             if (ppd != null) {
-                resultCollection = FLint.checkMany(inputFile, new File(ppd));
+                resultCollection = Flint.checkMany(inputFile, new File(ppd));
             } else {
-                resultCollection = FLint.checkMany(inputFile, new FLint());
+                resultCollection = Flint.checkMany(inputFile, new Flint());
             }
             out = new PrintWriter(new FileWriter(output));
             for (List<CheckResult> results : resultCollection) {
-                FLint.printResults(results, out);
+                Flint.printResults(results, out);
             }
             out.close();
             LOGGER.info("DONE.");

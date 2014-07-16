@@ -26,7 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
 import static junit.framework.TestCase.assertTrue;
-import static uk.bl.dpt.qa.flint.FLint.getAvailableFormats;
+import static uk.bl.dpt.qa.flint.Flint.getAvailableFormats;
 
 /**
   * Common step defs for testing flint-cli
