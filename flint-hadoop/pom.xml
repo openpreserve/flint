@@ -12,7 +12,7 @@
     <artifactId>flint-hadoop</artifactId>
 
     <properties>
-        <mainclass>uk.bl.dpt.qa.flint.hadoop.FLintHadoop</mainclass>
+        <mainclass>uk.bl.dpt.qa.flint.hadoop.FlintHadoop</mainclass>
     </properties>
 
     <dependencies>
