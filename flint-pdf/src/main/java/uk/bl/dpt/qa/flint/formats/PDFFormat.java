@@ -104,7 +104,7 @@ public class PDFFormat extends PolicyAware implements Format {
         try {
             checkResult = new CheckResult(contentFile.getName(), this.getFormatName(), this.getVersion(), getAllCategoryNames());
         } catch (Exception e) {
-            throw new RuntimeException("could not initialise check-result! reason: {}", e);
+            throw new RuntimeException("could not initialise check-result! reason: "+e);
         }
         Long startTime = System.currentTimeMillis();
 
@@ -139,7 +139,7 @@ public class PDFFormat extends PolicyAware implements Format {
     }
 
     public static InputStream getPolicyInputStream() {
-        return ResourceUtil.loadResource(SCH_POLICY);
+        return PDFFormat.class.getResourceAsStream(SCH_POLICY);
     }
 
 }

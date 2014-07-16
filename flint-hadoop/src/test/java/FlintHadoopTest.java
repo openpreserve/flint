@@ -73,8 +73,8 @@ public class FlintHadoopTest {
         //mapRedDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         mapDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
-        reduceDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
-        mapRedDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
+//        reduceDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
+//        mapRedDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
 
         testPdf1CheckResult =  new Flint().check(new File(testPdf1Path)).get(0);
         testPdf2CheckResult =  new Flint().check(new File(testPdf2Path)).get(0);
