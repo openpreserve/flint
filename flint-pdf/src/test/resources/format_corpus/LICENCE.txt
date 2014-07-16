@@ -1,5 +1,0 @@
-License
--------
-All files in this folder are from https://github.com/openplanets/format-corpus/tree/master/pdfCabinetOfHorrors
-and under Creative Commons CC0: Public Domain Dedication.
-See http://creativecommons.org/publicdomain/zero/1.0/
