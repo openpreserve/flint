@@ -25,6 +25,7 @@ The core module includes (optional) a Schematron-based policy-focused validation
 
 ### Reusing external libraries
 In addition to Flint's internal logic, Flint offers wrappers around a variety of third-party libraries and tools, including:
+
 * Apache PDFBox
 * Apache Tika
 * Calibre
@@ -43,6 +44,7 @@ NOTE: both implementations are work-in-progress and hence far from being satisfa
 
 ## Ways you can use Flint
 Flint comes with several 'entry points' that make use of the core functionality
+
 * a Command Line Interface (flint-cli)
 * a simple GUI, using JavaFX8 (flint-fx-direct, flint-fx-websocket)
 * a Hadoop MapReduce module (flint-hadoop)
