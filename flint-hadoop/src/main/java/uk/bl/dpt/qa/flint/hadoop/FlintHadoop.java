@@ -88,7 +88,7 @@ public class FlintHadoop {
     /**
      * Map class
      */
-    public static class Map extends Mapper<LongWritable, Text, Text, CheckResultText> {
+    public static class FlintMap extends Mapper<LongWritable, Text, Text, CheckResultText> {
 
         // TODO: deal with these debug switches
         private static final boolean extractText = false;
@@ -210,91 +210,91 @@ public class FlintHadoop {
     /**
      * Generate an overall report csv
      */
-    public static class Reduce extends Reducer<Text, CheckResultText, Text, Text> {
-
-        private FileSystem gFS = null;
-        private Path outputDir = null;
-        private File gTempDir = null;
-
-        @Override
-        public void setup(Context pContext) throws IOException, InterruptedException {
-            super.setup(pContext);
-            try {
-                gFS = FileSystem.get(pContext.getConfiguration());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            gTempDir = Tools.newTempDir();
-            LOGGER.debug("created new tempDir {} and it exists: {}", gTempDir, gTempDir.exists());
-
-            outputDir = new Path(pContext.getConfiguration().get("mapred.output.dir"));
-
-            try {
-                writeHeader("PDF");
-            } catch (Exception e) {
-                LOGGER.error("caught Exception while trying to write header", e);
-            }
-        }
-
-        @Override
-        public void cleanup(Context pContext) throws IOException, InterruptedException {
-            super.cleanup(pContext);
-            // clean up temp dir
-            if (gTempDir.exists()) {
-            	FileUtil.deleteDirectory(gTempDir);
-            }
-        }
-
-
-        /**
-         * Writes the header of the format-specific tabular data to its own file.
-         *
-         * @param pFormat the string representation of the format (e.g. "PDF", "EPUB",..)
-         * @throws Exception
-         */
-        private void writeHeader(String pFormat) throws Exception {
-            File headerFile = new File(gTempDir, "header_for_" + pFormat);
-            if (!headerFile.exists()) {
-                Path headerFileHDFS = new Path(outputDir, headerFile.getName());
-                if (!gFS.exists(headerFileHDFS)) {
-                    FileUtils.write(headerFile, "filename\t" + FlintHadoop.buildHeader(pFormat));
-                    gFS.copyFromLocalFile(false, false, new Path(headerFile.getAbsolutePath()), headerFileHDFS);
-                }
-            }
-        }
-
-        @Override
-        public void reduce(Text pKey, Iterable<CheckResultText> pValues, Context pContext)
-                throws IOException, InterruptedException {
-
-            if (pKey.toString().startsWith("Exception")) {
-                pContext.write(pKey, new CheckResultText());
-            } else {
-                //InputStream zipStream = gFS.open(new Path(gInputDir+"/"+key));
-                //if(zipStream!=null) {
-                //    InputStream report = recoverStreamThatEndsWith(zipStream, ".xml");
-                //    if(report!=null) {
-                //        BufferedInputStream xml = new BufferedInputStream(report);
-                //        if(xml!=null) {
-                //            xml.mark(1024768);
-                //            String overall = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/@result");
-                //            xml.reset();
-                //            String wellFormed = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/checkCategory[@name='WELL_FORMED']/@result");
-                //            xml.reset();
-                //            String noDrm = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/checkCategory[@name='NO_DRM']/@result");
-                //            xml.close();
-                //            collector.collect(key, new Text("\t,"+overall+","+wellFormed+","+noDrm+","));
-                //            return;
-                //        }
-                //    }
-                for (CheckResultText record : pValues) {
-                    pContext.write(new Text(pKey), record);
-                }
-            }
-        }
-    }
+//    public static class FlintReduce extends Reducer<Text, CheckResultText, Text, Text> {
+//
+//        private FileSystem gFS = null;
+//        private Path outputDir = null;
+//        private File gTempDir = null;
+//
+//        @Override
+//        public void setup(Context pContext) throws IOException, InterruptedException {
+//            super.setup(pContext);
+//            try {
+//                gFS = FileSystem.get(pContext.getConfiguration());
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//
+//            gTempDir = Tools.newTempDir();
+//            LOGGER.debug("created new tempDir {} and it exists: {}", gTempDir, gTempDir.exists());
+//
+//            outputDir = new Path(pContext.getConfiguration().get("mapred.output.dir"));
+//
+//            try {
+//                writeHeader("PDF");
+//            } catch (Exception e) {
+//                LOGGER.error("caught Exception while trying to write header", e);
+//            }
+//        }
+//
+//        @Override
+//        public void cleanup(Context pContext) throws IOException, InterruptedException {
+//            super.cleanup(pContext);
+//            // clean up temp dir
+//            if (gTempDir.exists()) {
+//            	FileUtil.deleteDirectory(gTempDir);
+//            }
+//        }
+//
+//
+//        /**
+//         * Writes the header of the format-specific tabular data to its own file.
+//         *
+//         * @param pFormat the string representation of the format (e.g. "PDF", "EPUB",..)
+//         * @throws Exception
+//         */
+//        private void writeHeader(String pFormat) throws Exception {
+//            File headerFile = new File(gTempDir, "header_for_" + pFormat);
+//            if (!headerFile.exists()) {
+//                Path headerFileHDFS = new Path(outputDir, headerFile.getName());
+//                if (!gFS.exists(headerFileHDFS)) {
+//                    FileUtils.write(headerFile, "filename\t" + FlintHadoop.buildHeader(pFormat));
+//                    gFS.copyFromLocalFile(false, false, new Path(headerFile.getAbsolutePath()), headerFileHDFS);
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void reduce(Text pKey, Iterable<CheckResultText> pValues, Context pContext)
+//                throws IOException, InterruptedException {
+//
+//            if (pKey.toString().startsWith("Exception")) {
+//                pContext.write(pKey, new CheckResultText());
+//            } else {
+//                //InputStream zipStream = gFS.open(new Path(gInputDir+"/"+key));
+//                //if(zipStream!=null) {
+//                //    InputStream report = recoverStreamThatEndsWith(zipStream, ".xml");
+//                //    if(report!=null) {
+//                //        BufferedInputStream xml = new BufferedInputStream(report);
+//                //        if(xml!=null) {
+//                //            xml.mark(1024768);
+//                //            String overall = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/@result");
+//                //            xml.reset();
+//                //            String wellFormed = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/checkCategory[@name='WELL_FORMED']/@result");
+//                //            xml.reset();
+//                //            String noDrm = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/checkCategory[@name='NO_DRM']/@result");
+//                //            xml.close();
+//                //            collector.collect(key, new Text("\t,"+overall+","+wellFormed+","+noDrm+","));
+//                //            return;
+//                //        }
+//                //    }
+//                for (CheckResultText record : pValues) {
+//                    pContext.write(new Text(pKey), record);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Creates a format-specific header for the tabular output.
@@ -310,7 +310,7 @@ public class FlintHadoop {
     }
 
     /**
-     * Test main method
+     * Main method
      * @param args
      * @throws IOException
      * @throws ClassNotFoundException
@@ -336,8 +336,8 @@ public class FlintHadoop {
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(name));
         //set the mapper to this class' mapper
-        job.setMapperClass(Map.class);
-        job.setReducerClass(Reduce.class);
+        job.setMapperClass(FlintMap.class);
+        //job.setReducerClass(FlintReduce.class);
         //this input format should split the input by one line per map by default.
         job.setInputFormatClass(NLineInputFormat.class);
         //sets how the output is written cf. OutputFormat
