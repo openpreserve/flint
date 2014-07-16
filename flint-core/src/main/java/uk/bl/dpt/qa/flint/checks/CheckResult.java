@@ -18,13 +18,16 @@
 package uk.bl.dpt.qa.flint.checks;
 
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_XML10;
 
