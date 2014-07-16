@@ -1,7 +1,7 @@
 
 # Flint
 
-[![Build Status](https://travis-ci.org/openplanets/Flint.png)](https://travis-ci.org/openplanets/Flint)
+[![Build Status](https://travis-ci.org/openplanets/flint.png)](https://travis-ci.org/openplanets/flint)
 
 A modular and extendible file/format validation framework
 
