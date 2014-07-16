@@ -14,7 +14,6 @@
 
     <modules>
         <module>flint-fx-direct</module>
-        <module>flint-fx-websocket</module>
         <module>flint-fx-common</module>
     </modules>
 
