@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static uk.bl.dpt.qa.flint.wrappers.TikaWrapper.getMimetype;
 import static uk.bl.dpt.utils.util.FileUtil.traverse;
 
 /**
@@ -60,9 +61,9 @@ public class Flint {
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      */
-    public Flint() throws IllegalAccessException, InstantiationException {
-                         formats = getAvailableFormats().values();
-                                                                              }
+    public FLint() throws IllegalAccessException, InstantiationException {
+        formats = getAvailableFormats().values();
+    }
 
     /**
      * Create a new FLint object, adding an instance of all formats to the format list
@@ -130,6 +131,32 @@ public class Flint {
     }
 
     /**
+     * @return a list of available formats, gathered via *reflection*
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public static Map<String, Format> getAvailableFormats(String mimeType) throws IllegalAccessException, InstantiationException {
+        Map<String, Format> fs = new LinkedHashMap<String, Format>();
+        Set<Class<? extends Format>> reflections = new Reflections("uk.bl.dpt.qa.flint.formats").getSubTypesOf(Format.class);
+        for (Class<? extends Format> fClass : reflections) {
+            Format f = fClass.newInstance();
+            if (f.canCheck(mimeType)) {
+                gLogger.info("available format {}, as in {}", fClass, fClass);
+                fs.put(f.getFormatName(), f);
+            }
+        }
+        return fs;
+    }
+
+    public static Collection<String> getAcceptedMimetypes() throws InstantiationException, IllegalAccessException {
+        Collection<String> mTypes = new HashSet<String>();
+        for (Format f : getAvailableFormats().values()) {
+            mTypes.addAll(f.acceptedMimeTypes());
+        }
+        return mTypes;
+    }
+
+    /**
      * Check a file using the specific format's check criteria.
      * @param pFile file to check
      * @return a list of {@link uk.bl.dpt.qa.flint.checks.CheckResult}
@@ -138,7 +165,7 @@ public class Flint {
 
         boolean checked = false;
 
-        String mimetype = TikaWrapper.getMimetype(pFile);
+        String mimetype = getMimetype(pFile);
 
         List<CheckResult> results = new ArrayList<CheckResult>();
 
@@ -160,7 +187,16 @@ public class Flint {
         return results;
     }
 
-    public static List<List<CheckResult>> checkMany(File inputFile, Flint flint) throws InstantiationException, IllegalAccessException {
+    /**
+     * Checks a file or all files in a directory recursively using a given FLint instance.
+     *
+     * @param inputFile a file or directory
+     * @param flint a FLint instance
+     * @return a list of check-result lists, one list for each file (as it may have different format implementations)
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    public static List<List<CheckResult>> checkMany(File inputFile, FLint flint) throws InstantiationException, IllegalAccessException {
         List<File> files = new LinkedList<File>();
         traverse(inputFile, files);
 
@@ -174,6 +210,16 @@ public class Flint {
         return results;
     }
 
+    /**
+     * Checks a file or all files in a directory recursively using a given FLint instance.
+     *
+     * @param inputFile a file or directory
+     * @param policyPropertiesDir the directory where to find policy-properties files for each format
+     * @return a list of check-result lists, one list for each file (as it may have different format implementations)
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
     public static List<List<CheckResult>> checkMany(File inputFile, File policyPropertiesDir) throws InstantiationException, IllegalAccessException, IOException {
         Flint flint;
         if (policyPropertiesDir != null) {

@@ -17,6 +17,14 @@
  */
 package uk.bl.dpt.qa.flint.formats;
 
+import uk.bl.dpt.qa.flint.checks.*;
+import uk.bl.dpt.qa.flint.formats.Format;
+import uk.bl.dpt.qa.flint.formats.PolicyAware;
+import uk.bl.dpt.qa.flint.pdf.checks.FixedCategories;
+import uk.bl.dpt.qa.flint.pdf.checks.PolicyValidation;
+import uk.bl.dpt.qa.flint.pdf.checks.SpecificDrmChecks;
+import uk.bl.dpt.qa.flint.pdf.checks.Wellformedness;
+
 import javax.xml.transform.stream.StreamSource;
 
 import uk.bl.dpt.qa.flint.checks.CheckResult;
@@ -108,7 +116,7 @@ public class PDFFormat extends PolicyAware implements Format {
         }
         Long startTime = System.currentTimeMillis();
 
-        checkResult.addAll(TimedValidation.validate(new PDFPolicyValidation(WRAPPER_TIMEOUT), contentFile));
+        checkResult.addAll(TimedValidation.validate(new PolicyValidation(WRAPPER_TIMEOUT, patternFilter), contentFile));
         checkResult.addAll(TimedValidation.validate(new SpecificDrmChecks(WRAPPER_TIMEOUT, patternFilter), contentFile));
         checkResult.addAll(TimedValidation.validate(new WellformedTests(WRAPPER_TIMEOUT, patternFilter), contentFile));
 
@@ -119,8 +127,18 @@ public class PDFFormat extends PolicyAware implements Format {
 
     @Override
     public boolean canCheck(File pFile, String mType) {
-        return ((mType != null && mType.toLowerCase().endsWith("application/pdf"))
-                || (pFile.getName().toLowerCase().endsWith(".pdf")));
+        return (canCheck(mType) ||
+                pFile.getName().toLowerCase().endsWith(".pdf"));
+    }
+
+    @Override
+    public boolean canCheck(String mType) {
+        return (mType != null && acceptedMimeTypes().contains(mType));
+    }
+
+    @Override
+    public Collection<String> acceptedMimeTypes() {
+        return new HashSet<String>() {{ add("application/pdf"); }};
     }
 
     @Override

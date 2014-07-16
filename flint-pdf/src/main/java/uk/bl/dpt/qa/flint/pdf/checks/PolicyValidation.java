@@ -15,10 +15,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package uk.bl.dpt.qa.flint.checks;
+package uk.bl.dpt.qa.flint.pdf.checks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.bl.dpt.qa.flint.checks.CheckCategory;
+import uk.bl.dpt.qa.flint.checks.TimedTask;
 import uk.bl.dpt.qa.flint.formats.PDFFormat;
 import uk.bl.dpt.qa.flint.formats.PolicyAware;
 import uk.bl.dpt.qa.flint.wrappers.PDFBoxWrapper;
@@ -27,21 +29,20 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 /**
  * Wrapper around the policy-validation process that produces an error message
  * in case of a timing out after PDFFormat#Wrapper_TIMEOUT seconds.
  */
-public class PDFPolicyValidation extends TimedTask  {
+public class PolicyValidation extends TimedTask {
 
     private Logger logger;
+    private Set<String> patternFilter;
 
-    /**
-     * Create a new PDFPolicyValidation Object
-     * @param timeout length of time before PDFBoxWrapper is timed out
-     */
-    public PDFPolicyValidation(long timeout) {
+    public PolicyValidation(long timeout, Set<String> patternFilter) {
         super(FixedCategories.POLICY_VALIDATION.toString(), timeout);
+        this.patternFilter = patternFilter;
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -50,7 +51,7 @@ public class PDFPolicyValidation extends TimedTask  {
         logger.info("Performing a policy validation on {}", contentFile);
         ByteArrayOutputStream outputXml = PDFBoxWrapper.preflightToXml(contentFile);
         return PolicyAware.policyValidationResult(new StreamSource(new ByteArrayInputStream(outputXml.toByteArray())),
-                new StreamSource(PDFFormat.getPolicyInputStream()));
+                new StreamSource(PDFFormat.getPolicyStatically()), patternFilter);
     }
 
 }

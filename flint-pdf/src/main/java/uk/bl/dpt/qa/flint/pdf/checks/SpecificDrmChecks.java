@@ -15,10 +15,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package uk.bl.dpt.qa.flint.checks;
+package uk.bl.dpt.qa.flint.pdf.checks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.bl.dpt.qa.flint.checks.CheckCategory;
+import uk.bl.dpt.qa.flint.checks.CheckCheck;
+import uk.bl.dpt.qa.flint.checks.TimedTask;
 import uk.bl.dpt.qa.flint.wrappers.PDFBoxWrapper;
 import uk.bl.dpt.qa.flint.wrappers.iTextWrapper;
 
@@ -26,7 +29,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Wrapper around additional specific DRM checks that produces an error message

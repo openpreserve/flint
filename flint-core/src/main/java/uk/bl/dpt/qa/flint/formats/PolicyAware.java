@@ -71,12 +71,12 @@ public abstract class PolicyAware {
      * @return a report with resulting assertion errors and their frequency.
      * @throws Exception 
      */
-    public static LinkedHashMap<String, CheckCategory> policyValidationResult(StreamSource resultToBeValidated, StreamSource schema) throws Exception {
+    public static LinkedHashMap<String, CheckCategory> policyValidationResult(StreamSource resultToBeValidated, StreamSource schema, Set<String> pFilter) throws Exception {
         LinkedHashMap<String, CheckCategory> ccMap = new LinkedHashMap<String, CheckCategory>();
-        Validator validator = valFac.newValidator(schema, patternFilter);
+        Validator validator = valFac.newValidator(schema, pFilter);
         validator.validate(resultToBeValidated);
         LinkedHashMap<String, ? extends Map<String, Integer>> report = validator.getReport();
-        for (Map.Entry<String, String> test : valFac.getAssertPatternMap(schema, patternFilter).entrySet()) {
+        for (Map.Entry<String, String> test : valFac.getAssertPatternMap(schema, pFilter).entrySet()) {
             CheckCategory cc;
             if (ccMap.containsKey(test.getValue())) {
                 cc = ccMap.get(test.getValue());

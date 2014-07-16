@@ -32,13 +32,23 @@ public class SimpleFormatWithPolicy extends PolicyAware implements Format {
     }
 
     @Override
+    public boolean canCheck(String pMimetype) {
+        return false;
+    }
+
+    @Override
+    public Collection<String> acceptedMimeTypes() {
+        return null;
+    }
+
+    @Override
     public CheckResult validationResult(File contentFile) {
         CheckResult checkResult;
         try {
             checkResult = new CheckResult(contentFile.getName(), this.getFormatName(), this.getVersion(), getAllCategoryNames());
             String xml = FileUtils.readFileToString(contentFile);
             checkResult.addAll(PolicyAware.policyValidationResult(new StreamSource(new ByteArrayInputStream(xml.getBytes())),
-                    new StreamSource(getPolicy())));
+                    new StreamSource(getPolicy()), new HashSet<String>()));
         } catch (Exception e) {
             throw new RuntimeException("could not initialise check-result! reason: {}", e);
         }

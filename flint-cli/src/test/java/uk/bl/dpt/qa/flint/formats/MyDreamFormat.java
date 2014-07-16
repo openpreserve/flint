@@ -19,6 +19,17 @@ public class MyDreamFormat extends PolicyAware implements Format {
     public boolean canCheck(File pFile, String pMimetype) {
             return pMimetype.split("/")[1].equals(getFormatName());
     }
+
+    @Override
+    public boolean canCheck(String pMimetype) {
+        return false;
+    }
+
+    @Override
+    public Collection<String> acceptedMimeTypes() {
+        return null;
+    }
+
     @Override
     public CheckResult validationResult(File contentFile) {
             return null;

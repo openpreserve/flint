@@ -18,22 +18,18 @@
 package uk.bl.dpt.qa.flint;
 
 import javafx.concurrent.Task;
-import javafx.fxml.Initializable;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Popup;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.utils.PolicyPropertiesCreator;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
+
+import static uk.bl.dpt.qa.flint.wrappers.TikaWrapper.getMimetype;
 
 /**
  * A controller for the flint-fx GUI that directly runs the flint classes.
@@ -50,7 +46,7 @@ public class Controller extends CommonController {
                 try {
                     logBookContent += "\n--> processing file " + inputFile.getName();
                     updateMessage(logBookContent);
-                    List<CheckResult> results = new FLint(getCheckedPatterns()).check(inputFile);
+                    List<CheckResult> results = new FLint(getCheckedCategories()).check(inputFile);
                     outFile = new File(outputD, "flint_results_" + inputFile.getName() + ".xml");
                     out = new PrintWriter(new FileWriter(outFile));
                     logger.info("Analysis done, results: {}", results);
@@ -75,11 +71,24 @@ public class Controller extends CommonController {
         new Thread(task).start();
     }
 
-    public void queryPolicyPatterns() {
+    @Override
+    protected Collection<String> getAvailableFormats() {
+        Collection<String> formats = null;
+        try {
+             formats = FLint.getAvailableFormats(getMimetype(inputFile)).keySet();
+        } catch (IllegalAccessException | InstantiationException e) {
+            logger.error(e.getMessage());
+            popupError(e);
+        }
+        return formats;
+    }
+
+    @Override
+    public void queryPolicyCategories(String format) {
         Task<Map<String, Map<String, Set<String>>>> task = new Task<Map<String, Map<String, Set<String>>>>() {
             @Override protected Map<String, Map<String, Set<String>>> call() {
                 try {
-                    return PolicyPropertiesCreator.getPolicyMap(getFormat());
+                    return PolicyPropertiesCreator.getPolicyMap(format);
                 } catch (Exception e) {
                     logger.error(e.getMessage());
                 }

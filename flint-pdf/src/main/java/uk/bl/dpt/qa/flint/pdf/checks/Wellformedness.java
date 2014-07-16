@@ -15,11 +15,14 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package uk.bl.dpt.qa.flint.checks;
+package uk.bl.dpt.qa.flint.pdf.checks;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.bl.dpt.qa.flint.checks.CheckCategory;
+import uk.bl.dpt.qa.flint.checks.CheckCheck;
+import uk.bl.dpt.qa.flint.checks.TimedTask;
 import uk.bl.dpt.qa.flint.wrappers.CalibreWrapper;
 import uk.bl.dpt.qa.flint.wrappers.Jhove1Wrapper;
 import uk.bl.dpt.qa.flint.wrappers.PDFBoxWrapper;
@@ -32,17 +35,12 @@ import java.util.Set;
  * Wrapper around additional specific WellFormdness checks that produces an error message
  * in case of a timing out after PDFFormat#Wrapper_TIMEOUT seconds.
  */
-public class WellformedTests extends TimedTask {
+public class Wellformedness extends TimedTask {
 
     private Logger logger;
     private Set<String> patternFilter;
 
-    /**
-     * Create a WellformedTests Object
-     * @param timeout timeout for calls to external libraries, in case of error
-     * @param patternFilter
-     */
-    public WellformedTests(long timeout, Set<String> patternFilter) {
+    public Wellformedness(long timeout, Set<String> patternFilter) {
         super(FixedCategories.WELL_FORMED.toString(), timeout);
         this.patternFilter = patternFilter;
         this.logger = LoggerFactory.getLogger(this.getClass());

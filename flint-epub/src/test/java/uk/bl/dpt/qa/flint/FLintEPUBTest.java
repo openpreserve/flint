@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
-import uk.bl.dpt.qa.flint.checks.FixedCategories;
+import uk.bl.dpt.qa.flint.epub.checks.FixedCategories;
 
 import java.io.File;
 

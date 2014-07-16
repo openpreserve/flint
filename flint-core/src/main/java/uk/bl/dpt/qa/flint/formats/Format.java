@@ -40,6 +40,18 @@ public interface Format {
 	 */
 	public boolean canCheck(File pFile, String pMimetype);
 
+/**
+	 * Can this Format object check this mimeType?
+	 * @param pMimetype mimetype of file to check
+	 * @return whether or not this Format object can check the file
+	 */
+	public boolean canCheck(String pMimetype);
+
+    /**
+     * @return a collection of mimeTypes accepted by this format
+     */
+    public Collection<String> acceptedMimeTypes();
+
     public CheckResult validationResult(File contentFile);
 
     public Map<String, Map<String, Set<String>>> getFixedCategories();

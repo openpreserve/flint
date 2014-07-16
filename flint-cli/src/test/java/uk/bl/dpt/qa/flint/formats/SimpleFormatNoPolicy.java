@@ -19,7 +19,17 @@ import java.util.*;
         return nameArray[nameArray.length-1].equals(getFormatName());
     }
 
-    @Override
+     @Override
+     public boolean canCheck(String pMimetype) {
+         return false;
+     }
+
+     @Override
+     public Collection<String> acceptedMimeTypes() {
+         return null;
+     }
+
+     @Override
     public CheckResult validationResult(File contentFile) {
         CheckCategory cc = new CheckCategory("testCat");
         cc.add(new CheckCheck("testCheck", true, null));

@@ -15,7 +15,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package uk.bl.dpt.qa.flint.checks;
+package uk.bl.dpt.qa.flint.epub.checks;
 
 /**
  * There are two types of Check Categories:
@@ -25,19 +25,9 @@ package uk.bl.dpt.qa.flint.checks;
  *     'manually' to the dynamic list; these ones are the FixedCategories.
  */
 public enum FixedCategories {
-	
-	/**
-	 * Category for testing well-formedness
-	 */
-	WELL_FORMED("well-formed"),
-	/**
-	 * Category for checking for DRM
-	 */
-    NO_DRM("specific-drm-checks"),
-    /**
-     * Category for validating against a policy
-     */
-    POLICY_VALIDATION("policy-validation");
+    WELL_FORMED_CALIBRE("Well formed according to Calibre"),
+    NO_DRM_RIGHTS_FILE("DRM check looking for rights file"),
+    POLICY_VALIDATION("Overall error indicator for policy validation");
 
     private final String cat;
 
@@ -48,5 +38,4 @@ public enum FixedCategories {
     public String toString() {
         return cat;
     }
-    
 }

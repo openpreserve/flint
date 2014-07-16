@@ -20,7 +20,12 @@ package uk.bl.dpt.qa.flint;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -33,9 +38,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
-
-import static uk.bl.dpt.qa.flint.wrappers.TikaWrapper.getMimetype;
+import java.util.Collection;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A superclass for the Controllers of flint-fx-direct and flint-fx-websocket providing elements
@@ -48,6 +56,7 @@ public abstract class CommonController implements Initializable {
     protected File inputFile;
     protected File outputD;
     protected File outFile;
+    protected String format;
 
     @FXML
     protected AnchorPane mainStage;
@@ -74,7 +83,7 @@ public abstract class CommonController implements Initializable {
 
     protected abstract void askForValidation();
 
-    protected abstract void queryPolicyPatterns();
+    protected abstract void queryPolicyCategories(String format);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -88,7 +97,7 @@ public abstract class CommonController implements Initializable {
                 // write filename to input textfield
                 inputPath.setText(inputFile.getPath());
                 // if outputD is also set..
-                queryPolicyPatterns();
+                queryPolicyCategories();
                 if (outputD != null && outputD.exists()) {
                     setReady();
                 }
@@ -121,8 +130,19 @@ public abstract class CommonController implements Initializable {
      * Tries to identify the format type of a file.
      * @return the format type in capital letters (e.g. "PDF")
      */
-    protected String getFormat() {
-        return getMimetype(inputFile).split("/")[1].toUpperCase();
+    protected abstract Collection<String> getAvailableFormats();
+
+    public void queryPolicyCategories() {
+        Collection<String> formats = getAvailableFormats();
+        if (formats.size() == 1) {
+            format = formats.iterator().next();
+        } else {
+            // TODO: change this:
+            format = formats.iterator().next();
+            // TODO: implement a dialog to ask for format selection
+            //this.format = formatSelection(formats);
+        }
+        queryPolicyCategories(format);
     }
 
     /**
@@ -136,7 +156,6 @@ public abstract class CommonController implements Initializable {
         tickHeadline.getStyleClass().add("in-tab-headline");
         policyPatterns.getChildren().add(tickHeadline);
         try {
-            String format = getFormat();
             logger.debug("format detected: {}", format);
             logger.debug("polMap: {}", polMap);
             for (Map.Entry<String, Map<String, Set<String>>> pattern : polMap.entrySet()) {
@@ -172,22 +191,22 @@ public abstract class CommonController implements Initializable {
     }
 
     /**
-     * Parse the checkboxes and add a pattern to the set if the checkbox is ticked.
-     * @return a map {formatType: (patternA, patternB, ..)}
+     * Parse the checkboxes and add a category to the set if the checkbox is ticked.
+     * @return a map {formatType: (categoryA, categoryB, ..)}
      */
-    protected Map<String, Set<String>> getCheckedPatterns() {
-        Map<String, Set<String>> patterns = new TreeMap<>();
-        Set<String> formatPatterns = new TreeSet<>();
+    protected Map<String, Set<String>> getCheckedCategories() {
+        Map<String, Set<String>> cats = new TreeMap<>();
+        Set<String> formatCats = new TreeSet<>();
 
         for (Node checkBoxNode : policyPatterns.getChildren()) {
             if (!(checkBoxNode instanceof CheckBox)) continue;
             CheckBox checkBox = (CheckBox) checkBoxNode;
             if (checkBox.isSelected()) {
-                formatPatterns.add(checkBox.getText());
+                formatCats.add(checkBox.getText());
             }
         }
-        patterns.put(getFormat(), formatPatterns);
-        return patterns;
+        cats.put(format, formatCats);
+        return cats;
     }
 
 }

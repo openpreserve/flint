@@ -14,7 +14,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package uk.bl.dpt.qa.flint.converter;
+package uk.bl.dpt.qa.flint.pdf.converter;
 
 import java.io.File;
 

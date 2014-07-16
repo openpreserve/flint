@@ -19,19 +19,26 @@ package uk.bl.dpt.qa.flint.formats;
 import uk.bl.dpt.qa.flint.checks.CheckCategory;
 import uk.bl.dpt.qa.flint.checks.CheckCheck;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
-import uk.bl.dpt.qa.flint.checks.FixedCategories;
+import uk.bl.dpt.qa.flint.checks.TimedValidation;
+import uk.bl.dpt.qa.flint.epub.checks.FixedCategories;
+import uk.bl.dpt.qa.flint.epub.checks.PolicyValidation;
+import uk.bl.dpt.qa.flint.epub.checks.SpecificDrmChecks;
+import uk.bl.dpt.qa.flint.epub.checks.Wellformedness;
+import uk.bl.dpt.qa.flint.formats.Format;
+import uk.bl.dpt.qa.flint.formats.PolicyAware;
 import uk.bl.dpt.qa.flint.wrappers.CalibreWrapper;
-import uk.bl.dpt.qa.flint.wrappers.EpubCheckWrapper;
 
 import javax.xml.transform.stream.StreamSource;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * http://wiki.mobileread.com/wiki/DRM
@@ -42,8 +49,9 @@ public class EPUBFormat extends PolicyAware implements Format {
 
     private final static String SCH_POLICY = "/epubcheck-policy-validation/minimal.sch";
 
-    @SuppressWarnings("serial")
-	@Override
+    // when does a wrapper's task timeout [seconds]
+    private final static long WRAPPER_TIMEOUT = 10 * 60;
+
     public Map<String, Map<String, Set<String>>> getFixedCategories() {
         final Set<String> noDRM = new TreeSet<String>() {{
             add("checkForRightsFile");
@@ -75,55 +83,42 @@ public class EPUBFormat extends PolicyAware implements Format {
 
     @Override
     public CheckResult validationResult(File contentFile) {
-        CheckResult checkResult = null;
-        
+        CheckResult checkResult;
         try {
             checkResult = new CheckResult(contentFile.getName(), this.getFormatName(), this.getVersion(), getAllCategoryNames());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("could not initialise check-result! reason: {}", e);
         }
         Long startTime = System.currentTimeMillis();
-
-        if (patternFilter == null || patternFilter.contains(FixedCategories.NO_DRM_RIGHTS_FILE.toString()) ) {
-            checkResult.add(specificDRMChecks(contentFile));
-        }
-        if (CalibreWrapper.calibreIsAvailable() && (patternFilter == null || patternFilter.contains(FixedCategories.WELL_FORMED_CALIBRE.toString()))) {
-            checkResult.add(isWellFormed(contentFile));
-        }
-
-        try {
-            checkResult.addAll(policyValidationResult(EpubCheckWrapper.check(contentFile), new StreamSource(getPolicy())));
-        } catch (Exception e) {
-            logger.error("Caught exception: {}", e.getMessage());
-        }
-
+        checkResult.addAll(TimedValidation.validate(new PolicyValidation(WRAPPER_TIMEOUT, patternFilter), contentFile));
+        checkResult.addAll(TimedValidation.validate(new SpecificDrmChecks(WRAPPER_TIMEOUT, patternFilter), contentFile));
+        checkResult.addAll(TimedValidation.validate(new Wellformedness(WRAPPER_TIMEOUT, patternFilter), contentFile));
         checkResult.setTime(System.currentTimeMillis() - startTime);
+        logger.info("all checks done for {}", this.getFormatName());
         return checkResult;
-    }
-
-    /**
-     * Run DRM checks against an EPUB file
-     * @param pEPUB file to check
-     * @return a CheckCategory containing results from specificDRMChecks tests     
-     */
-    public CheckCategory specificDRMChecks(File pEPUB) {
-
-        CheckCategory cc = new CheckCategory(FixedCategories.NO_DRM_RIGHTS_FILE.toString());
-
-        cc.add(new CheckCheck("checkForRightsFile", !checkForRightsFile(pEPUB), null));
-        logger.trace(cc.get("checkForRightsFile").toString());
-
-        return cc;
     }
 
     @Override
     public boolean canCheck(File pFile, String pMimetype) {
-        return (pMimetype.toLowerCase().endsWith("application/epub+zip") ||
-                pMimetype.toLowerCase().endsWith("application/x-ibooks+zip") ||
+        return (canCheck(pMimetype) ||
                 //simple check
                 pFile.getName().toLowerCase().endsWith(".epub") ||
                 pFile.getName().toLowerCase().endsWith(".ibooks"));
     }
+
+    @Override
+    public boolean canCheck(String pMimetype) {
+        return acceptedMimeTypes().contains(pMimetype);
+    }
+
+    @Override
+    public Collection<String> acceptedMimeTypes() {
+        return new HashSet<String>() {{
+            add("application/epub+zip");
+            add("application/x-ibooks+zip");
+        }};
+    }
+
 
     @Override
     public String getFormatName() {
@@ -135,74 +130,11 @@ public class EPUBFormat extends PolicyAware implements Format {
     	return "0.1.0";
     }
 
-    /**
-     * This check used EpubCheck - according to it, none of the test files (from Adobe/Google/etc)
-     * are valid.  This poses an issue as to what is technically valid and what is ok.
-     * NOTE: this uses a new EpubCheck object, as does containsDRM(), so may be able to speed it up
-     * but object is on-per-DRMLint, not one-per-input-file.
-     * @param pFile file to check
-     * @return a CheckCategory containing results from isWellFormed tests
-     */
-    public CheckCategory isWellFormed(File pFile) {
-
-        CheckCategory cc = new CheckCategory(FixedCategories.WELL_FORMED_CALIBRE.toString());
-
-        try {
-            cc.add(new CheckCheck("isValidCalibre", CalibreWrapper.isValid(pFile), null));
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        logger.trace(cc.get("isValidCalibre").toString());
-
-        return cc;
-    }
-
     @Override
     public InputStream getPolicy() {
         return getClass().getResourceAsStream(SCH_POLICY);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    // Private methods for this class
-    ///////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Check for rights.xml file
-     * @param pEPUB
-     * @return
-     */
-    private boolean checkForRightsFile(File pEPUB) {
-        boolean ret = false;
-
-        final String RIGHTSFILE = "META-INF/rights.xml";//http://www.idpf.org/epub/30/spec/epub30-ocf.html#sec-container-metainf-rights.xml
-        final String ENCFILE = "META-INF/encryption.xml";//http://www.idpf.org/epub/30/spec/epub30-ocf.html#sec-container-metainf-encryption.xml
-
-        ZipFile zip;
-        try {
-            zip = new ZipFile(pEPUB);
-
-            ZipEntry entry = zip.getEntry(RIGHTSFILE);
-            if(null!=entry) {
-                ret = true;
-            }
-
-            entry = zip.getEntry(ENCFILE);
-            if(null!=entry) {
-                ret = true;
-            }
-
-            zip.close();
-
-        } catch (ZipException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        //System.out.println("Rights and/or encryption file: "+ret);
-        return ret;
-    }
-
-}
+    public static InputStream getPolicyStatically() {
+        return EPUBFormat.class.getResourceAsStream(SCH_POLICY);
+    }}

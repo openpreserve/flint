@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
-import uk.bl.dpt.qa.flint.converter.PDFToText;
+import uk.bl.dpt.qa.flint.pdf.converter.PDFToText;
 import uk.bl.dpt.qa.flint.wrappers.Tools;
 import uk.bl.dpt.utils.checksum.ChecksumUtil;
 import uk.bl.dpt.utils.util.FileUtil;

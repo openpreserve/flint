@@ -15,15 +15,16 @@
         *   See the License for the specific language governing permissions and
         *   limitations under the License.
         */
-package uk.bl.dpt.qa.flint;
+package uk.bl.dpt.qa.flint.pdf;
 
 import java.io.File;
 
-   import org.junit.Assert;
-   import org.junit.Before;
-   import org.junit.Test;
-   import uk.bl.dpt.qa.flint.checks.FixedCategories;
-   import uk.bl.dpt.qa.flint.checks.CheckResult;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import uk.bl.dpt.qa.flint.FLint;
+import uk.bl.dpt.qa.flint.checks.CheckResult;
+import uk.bl.dpt.qa.flint.pdf.checks.FixedCategories;
 
 @SuppressWarnings("javadoc")
 public class FLintPDFTest {
@@ -34,8 +35,8 @@ public class FLintPDFTest {
 
     @Before
     public void setUp() throws Exception {
-                      drmlint = new Flint();
-                                            }
+        drmlint = new FLint();
+    }
 
     // pdfPolicyValidation tests on the same files as previous tests
     @Test
