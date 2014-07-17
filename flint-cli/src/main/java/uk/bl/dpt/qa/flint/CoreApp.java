@@ -91,12 +91,12 @@ public class CoreApp {
                 List<List<CheckResult>> resultCollection;
                 String ppd = ns.getString("policy_properties_dir");
                 if (ppd != null) {
-                    resultCollection = FLint.checkMany(inputFile, new File(ppd));
+                    resultCollection = Flint.checkMany(inputFile, new File(ppd));
                 } else {
-                    resultCollection = FLint.checkMany(inputFile, new FLint());
+                    resultCollection = Flint.checkMany(inputFile, new Flint());
                 }
                 for (List<CheckResult> results : resultCollection) {
-                    FLint.printResults(results, out);
+                    Flint.printResults(results, out);
                 }
                 LOGGER.info("DONE.");
                 System.out.println("\ndone. results written to " + output);

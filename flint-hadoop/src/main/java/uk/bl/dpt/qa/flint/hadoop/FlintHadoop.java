@@ -16,7 +16,6 @@
  */
 package uk.bl.dpt.qa.flint.hadoop;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -25,14 +24,12 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.NLineInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.pdf.converter.PDFToText;
@@ -44,11 +41,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
- * MapReduce facility for FLint; takes a file with a list of hdfs filepaths as input,
+ * MapReduce facility for Flint; takes a file with a list of hdfs filepaths as input,
  * each of the files are sent to FLint for checking (map phase) and written out as
  * a row in a tabular data structure (reduce phase). Technically the reduce phase just
  * pipes through the rows creates in the map phase, and it makes sure that for each

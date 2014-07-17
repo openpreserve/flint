@@ -45,7 +45,7 @@ public class SpecificDrmChecks extends TimedTask {
     /**
      * Create a SpeficDRMChecks Object that times out if calls take longer than expected
      * @param pTimeout timeout to use
-     * @param pPatternFilter
+     * @param pPatternFilter a set of strings indicating which categories to use and not
      */
     public SpecificDrmChecks(long pTimeout, Set<String> pPatternFilter) {
         super(FixedCategories.NO_DRM.toString(), pTimeout);

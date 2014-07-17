@@ -28,7 +28,7 @@ import java.io.File;
 /**
  * Test collection for epub validation.
  */
-public class FLintEPUBTest {
+public class FlintEPUBTest {
 
     private Flint flint;
     private static String DRM_EPUBCHECK = "DRMDetectionEpubCheck";
@@ -41,7 +41,7 @@ public class FLintEPUBTest {
 
     @Test
     public final void testEpubSamplesWastelandWoffObf() {
-        File toTest = new File(FLintEPUBTest.class.getResource("/epub_samples/wasteland-woff-obf-20120118.epub").getPath());
+        File toTest = new File(FlintEPUBTest.class.getResource("/epub_samples/wasteland-woff-obf-20120118.epub").getPath());
         CheckResult result = flint.check(toTest).get(0);
         Assert.assertFalse("drm not found when it should be", result.get(DRM_EPUBCHECK).isHappy());
         Assert.assertFalse("epupcheck didn't find drm when it should have", result.get(DRM_EPUBCHECK).get("Encryption detected").isHappy());
@@ -51,7 +51,7 @@ public class FLintEPUBTest {
 
     @Test
     public final void testEpubSamplesWastelandOtfObf() {
-        File toTest = new File(FLintEPUBTest.class.getResource("/epub_samples/wasteland-otf-obf-20120118.epub").getPath());
+        File toTest = new File(FlintEPUBTest.class.getResource("/epub_samples/wasteland-otf-obf-20120118.epub").getPath());
         CheckResult result = flint.check(toTest).get(0);
         Assert.assertFalse("drm not found when it should be", result.get(DRM_EPUBCHECK).isHappy());
         Assert.assertFalse("epupcheck didn't find drm when it should have", result.get(DRM_EPUBCHECK).get("Encryption detected").isHappy());

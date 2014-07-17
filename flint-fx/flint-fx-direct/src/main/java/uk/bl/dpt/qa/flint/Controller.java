@@ -46,14 +46,14 @@ public class Controller extends CommonController {
                 try {
                     logBookContent += "\n--> processing file " + inputFile.getName();
                     updateMessage(logBookContent);
-                    List<CheckResult> results = new FLint(getCheckedCategories()).check(inputFile);
+                    List<CheckResult> results = new Flint(getCheckedCategories()).check(inputFile);
                     outFile = new File(outputD, "flint_results_" + inputFile.getName() + ".xml");
                     out = new PrintWriter(new FileWriter(outFile));
                     logger.info("Analysis done, results: {}", results);
                     String passed = (results.get(0).isHappy() ? "*passed*." : "*failed*.");
                     logBookContent += "\n    Analysis done, overall result: " + passed;
                     updateMessage(logBookContent);
-                    FLint.printResults(results, out);
+                    Flint.printResults(results, out);
                     out.close();
                     logger.info("results written to {}", outFile.getPath());
                 } catch (Exception e) {
@@ -75,7 +75,7 @@ public class Controller extends CommonController {
     protected Collection<String> getAvailableFormats() {
         Collection<String> formats = null;
         try {
-             formats = FLint.getAvailableFormats(getMimetype(inputFile)).keySet();
+             formats = Flint.getAvailableFormats(getMimetype(inputFile)).keySet();
         } catch (IllegalAccessException | InstantiationException e) {
             logger.error(e.getMessage());
             popupError(e);

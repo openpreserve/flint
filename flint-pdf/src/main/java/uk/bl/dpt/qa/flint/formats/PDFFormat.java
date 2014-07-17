@@ -17,31 +17,23 @@
  */
 package uk.bl.dpt.qa.flint.formats;
 
-import uk.bl.dpt.qa.flint.checks.*;
-import uk.bl.dpt.qa.flint.formats.Format;
-import uk.bl.dpt.qa.flint.formats.PolicyAware;
+import uk.bl.dpt.qa.flint.checks.CheckResult;
+import uk.bl.dpt.qa.flint.checks.TimedValidation;
 import uk.bl.dpt.qa.flint.pdf.checks.FixedCategories;
 import uk.bl.dpt.qa.flint.pdf.checks.PolicyValidation;
 import uk.bl.dpt.qa.flint.pdf.checks.SpecificDrmChecks;
 import uk.bl.dpt.qa.flint.pdf.checks.Wellformedness;
-
-import javax.xml.transform.stream.StreamSource;
-
-import uk.bl.dpt.qa.flint.checks.CheckResult;
-import uk.bl.dpt.qa.flint.checks.FixedCategories;
-import uk.bl.dpt.qa.flint.checks.PDFPolicyValidation;
-import uk.bl.dpt.qa.flint.checks.SpecificDrmChecks;
-import uk.bl.dpt.qa.flint.checks.TimedValidation;
-import uk.bl.dpt.qa.flint.checks.WellformedTests;
 import uk.bl.dpt.utils.util.ResourceUtil;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 
@@ -118,7 +110,7 @@ public class PDFFormat extends PolicyAware implements Format {
 
         checkResult.addAll(TimedValidation.validate(new PolicyValidation(WRAPPER_TIMEOUT, patternFilter), contentFile));
         checkResult.addAll(TimedValidation.validate(new SpecificDrmChecks(WRAPPER_TIMEOUT, patternFilter), contentFile));
-        checkResult.addAll(TimedValidation.validate(new WellformedTests(WRAPPER_TIMEOUT, patternFilter), contentFile));
+        checkResult.addAll(TimedValidation.validate(new Wellformedness(WRAPPER_TIMEOUT, patternFilter), contentFile));
 
         checkResult.setTime(System.currentTimeMillis() - startTime);
         logger.info("all checks done for {}", this.getFormatName());
@@ -160,4 +152,7 @@ public class PDFFormat extends PolicyAware implements Format {
         return PDFFormat.class.getResourceAsStream(SCH_POLICY);
     }
 
+    public static InputStream getPolicyStatically() {
+        return PDFFormat.class.getResourceAsStream(SCH_POLICY);
+    }
 }

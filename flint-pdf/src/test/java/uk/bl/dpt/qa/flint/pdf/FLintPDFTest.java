@@ -22,12 +22,12 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import uk.bl.dpt.qa.flint.FLint;
+import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.pdf.checks.FixedCategories;
 
 @SuppressWarnings("javadoc")
-public class FLintPDFTest {
+public class FlintPDFTest {
 
     private Flint drmlint;
 
@@ -35,13 +35,13 @@ public class FLintPDFTest {
 
     @Before
     public void setUp() throws Exception {
-        drmlint = new FLint();
+        drmlint = new Flint();
     }
 
     // pdfPolicyValidation tests on the same files as previous tests
     @Test
     public void testFormatCorpusEncryptionOpenPassword() {
-        File toTest = new File(FLintPDFTest.class.getResource("/format_corpus/encryption_openpassword.pdf").getPath());
+        File toTest = new File(FlintPDFTest.class.getResource("/format_corpus/encryption_openpassword.pdf").getPath());
         CheckResult result = drmlint.check(toTest).get(0);
         Assert.assertFalse("drm not found when it should be", result.get(DRM).isHappy());
         Assert.assertFalse(result.get("Checks for encryption").get("Open password").isHappy());
@@ -51,7 +51,7 @@ public class FLintPDFTest {
 
     @Test
     public void testPolicyFormatCorpusEncryptionNoTextAccess() {
-        File toTest = new File(FLintPDFTest.class.getResource("/format_corpus/encryption_notextaccess.pdf").getPath());
+        File toTest = new File(FlintPDFTest.class.getResource("/format_corpus/encryption_notextaccess.pdf").getPath());
         CheckResult result = drmlint.check(toTest).get(0);
         Assert.assertFalse("drm not found when it should be", result.get(DRM).isHappy());
         Assert.assertFalse(result.get("Checks for encryption").get("Encryption").isHappy());
@@ -60,7 +60,7 @@ public class FLintPDFTest {
 
     @Test
     public final void testPolicyFormatCorpusEncryptionNoPrinting() {
-        File toTest = new File(FLintPDFTest.class.getResource("/format_corpus/encryption_noprinting.pdf").getPath());
+        File toTest = new File(FlintPDFTest.class.getResource("/format_corpus/encryption_noprinting.pdf").getPath());
         CheckResult result = drmlint.check(toTest).get(0);
         Assert.assertFalse("drm not found when it should be", result.get(DRM).isHappy());
         Assert.assertFalse(result.get("Checks for encryption").get("Encryption").isHappy());
@@ -69,7 +69,7 @@ public class FLintPDFTest {
 
     @Test
     public final void testPolicyFormatCorpusEncryptionNoCopy() {
-        File toTest = new File(FLintPDFTest.class.getResource("/format_corpus/encryption_nocopy.pdf").getPath());
+        File toTest = new File(FlintPDFTest.class.getResource("/format_corpus/encryption_nocopy.pdf").getPath());
         CheckResult result = drmlint.check(toTest).get(0);
         Assert.assertFalse("drm not found when it should be", result.get(DRM).isHappy());
         Assert.assertFalse(result.get("Checks for encryption").isHappy());
@@ -79,7 +79,7 @@ public class FLintPDFTest {
 
     @Test
     public void testPolicyFormatCorpusTextOnlyFontsEmbeddedAll() {
-        File toTest = new File(FLintPDFTest.class.getResource("/format_corpus/text_only_fontsEmbeddedAll.pdf").getPath());
+        File toTest = new File(FlintPDFTest.class.getResource("/format_corpus/text_only_fontsEmbeddedAll.pdf").getPath());
         CheckResult result = drmlint.check(toTest).get(0);
         Assert.assertTrue("drm found when it should NOT be", result.get(DRM).isHappy());
         Assert.assertTrue(result.isHappy());

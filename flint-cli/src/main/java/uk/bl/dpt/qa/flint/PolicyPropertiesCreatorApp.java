@@ -68,7 +68,7 @@ public class PolicyPropertiesCreatorApp {
             } else {
                 // use current directory
                 output = new File(outputDefault);
-            };
+            }
 
             PolicyPropertiesCreator.create(output.getAbsolutePath(), format);
 

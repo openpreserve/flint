@@ -16,20 +16,14 @@
  */
 package uk.bl.dpt.qa.flint.formats;
 
-import uk.bl.dpt.qa.flint.checks.CheckCategory;
-import uk.bl.dpt.qa.flint.checks.CheckCheck;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.checks.TimedValidation;
 import uk.bl.dpt.qa.flint.epub.checks.FixedCategories;
 import uk.bl.dpt.qa.flint.epub.checks.PolicyValidation;
 import uk.bl.dpt.qa.flint.epub.checks.SpecificDrmChecks;
 import uk.bl.dpt.qa.flint.epub.checks.Wellformedness;
-import uk.bl.dpt.qa.flint.formats.Format;
-import uk.bl.dpt.qa.flint.formats.PolicyAware;
-import uk.bl.dpt.qa.flint.wrappers.CalibreWrapper;
 
 import javax.xml.transform.stream.StreamSource;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -137,4 +131,5 @@ public class EPUBFormat extends PolicyAware implements Format {
 
     public static InputStream getPolicyStatically() {
         return EPUBFormat.class.getResourceAsStream(SCH_POLICY);
-    }}
+    }
+}

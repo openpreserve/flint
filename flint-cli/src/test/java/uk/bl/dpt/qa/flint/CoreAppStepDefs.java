@@ -31,9 +31,6 @@ import java.nio.charset.Charset;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-/**
-  * Created by ageuder on 23/06/2014.
-  */
 public class CoreAppStepDefs {
 
     File tempDir;

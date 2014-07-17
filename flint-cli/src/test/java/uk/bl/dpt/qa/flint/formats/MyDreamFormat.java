@@ -3,16 +3,12 @@ package uk.bl.dpt.qa.flint.formats;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by ageuder on 14/05/2014.
- */
 @SuppressWarnings("unused")
 public class MyDreamFormat extends PolicyAware implements Format {
     @Override

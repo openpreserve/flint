@@ -1,13 +1,17 @@
 package uk.bl.dpt.qa.flint.formats;
 
 import org.apache.commons.io.FileUtils;
-import uk.bl.dpt.qa.flint.checks.*;
+import uk.bl.dpt.qa.flint.checks.CheckResult;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 public class SimpleFormatWithPolicy extends PolicyAware implements Format {
@@ -62,12 +66,12 @@ public class SimpleFormatWithPolicy extends PolicyAware implements Format {
 
     @Override
     public Map<String, Map<String, Set<String>>> getFixedCategories() {
-        return new HashMap<String, Map<String, Set<String>>>();
+        return new HashMap<>();
     }
 
     @Override
     public Collection<String> getAllCategoryNames() throws Exception {
-        Collection<String> cats = new HashSet<String>();
+        Collection<String> cats = new HashSet<>();
         cats.addAll(getFixedCategories().keySet());
         cats.addAll(requestPolicyPatternNames(new StreamSource(getPolicy())));
         return cats;

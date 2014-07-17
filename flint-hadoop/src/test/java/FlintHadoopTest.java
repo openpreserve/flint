@@ -16,28 +16,21 @@
  *   limitations under the License.
  */
 import com.google.common.io.Files;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
-import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.apache.hadoop.mrunit.types.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.hadoop.FlintHadoop;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
-
-import static org.fest.assertions.Assertions.assertThat;
 
 /**
  * Tests for reduce, map and both combined.
@@ -45,7 +38,7 @@ import static org.fest.assertions.Assertions.assertThat;
 public class FlintHadoopTest {
 
     MapDriver<LongWritable, Text, Text, FlintHadoop.CheckResultText> mapDriver;
-    ReduceDriver<Text, FlintHadoop.CheckResultText, Text, Text> reduceDriver;
+    //ReduceDriver<Text, FlintHadoop.CheckResultText, Text, Text> reduceDriver;
     MapReduceDriver<LongWritable, Text, Text, FlintHadoop.CheckResultText, Text, Text> mapRedDriver;
 
     final static String testPdf1Name = "encryption_openpassword.pdf";
@@ -60,7 +53,7 @@ public class FlintHadoopTest {
     static CheckResult testPdf2CheckResult;
 
     /**
-     * Set up the FilntHadoop tests
+     * Set up the FlintHadoop tests
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
@@ -73,8 +66,8 @@ public class FlintHadoopTest {
         //mapRedDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         mapDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
-//        reduceDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
-//        mapRedDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
+        //reduceDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
+        //mapRedDriver.getConfiguration().set("mapred.output.dir", tmpDir.getAbsolutePath());
 
         testPdf1CheckResult =  new Flint().check(new File(testPdf1Path)).get(0);
         testPdf2CheckResult =  new Flint().check(new File(testPdf2Path)).get(0);

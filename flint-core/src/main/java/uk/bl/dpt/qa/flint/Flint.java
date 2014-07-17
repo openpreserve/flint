@@ -17,18 +17,12 @@
  */
 package uk.bl.dpt.qa.flint;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.bl.dpt.qa.flint.checks.CheckResult;
+import uk.bl.dpt.qa.flint.formats.Format;
+import uk.bl.dpt.qa.flint.formats.PolicyAware;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -61,7 +55,7 @@ public class Flint {
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      */
-    public FLint() throws IllegalAccessException, InstantiationException {
+    public Flint() throws IllegalAccessException, InstantiationException {
         formats = getAvailableFormats().values();
     }
 
@@ -196,7 +190,7 @@ public class Flint {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public static List<List<CheckResult>> checkMany(File inputFile, FLint flint) throws InstantiationException, IllegalAccessException {
+    public static List<List<CheckResult>> checkMany(File inputFile, Flint flint) throws InstantiationException, IllegalAccessException {
         List<File> files = new LinkedList<File>();
         traverse(inputFile, files);
 
