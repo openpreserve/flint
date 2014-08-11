@@ -22,7 +22,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import uk.bl.dpt.qa.flint.formats.SimpleFormatNoPolicy;
 import uk.bl.dpt.qa.flint.formats.SimpleFormatWithPolicy;
 
@@ -56,7 +56,7 @@ public class CoreAppStepDefs {
 
     @Given("^I have a file \"(.*?)\" with the following content:$")
         public void i_have_a_file_with_the_following_content(String fileName, String content) throws Throwable {
-            FileUtils.write(new File(tempDir, fileName), content);
+            Files.write(content, new File(tempDir, fileName), Charset.defaultCharset());
         }
 
     @When("^I call the command line CoreApp specifying the file's location \"(.*?)\"$")
@@ -67,8 +67,8 @@ public class CoreAppStepDefs {
     @Then("^a results file \"(.*?)\" should be produced with the following content:$")
         public void a_results_file_should_be_produced_with_the_following_content(String fileName, String expectedContent) throws Throwable {
             File resultsFile = new File(tempDir, fileName);
-            String results = FileUtils.readFileToString(resultsFile, Charset.defaultCharset());
-            assertThat(results.replaceAll("\r\n|\n|\\s+", "")).isEqualTo(expectedContent.replaceAll("\r\n|\n|\\s+", ""));
+            String results = StringUtils.join(Files.readLines(resultsFile, Charset.defaultCharset()), "");
+            assertThat(results.replaceAll("\\s+", "")).isEqualTo(expectedContent.replaceAll("\r\n|\n|\\s+", ""));
         }
 
 }

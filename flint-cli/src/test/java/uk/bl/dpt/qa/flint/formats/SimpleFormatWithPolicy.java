@@ -1,12 +1,14 @@
 package uk.bl.dpt.qa.flint.formats;
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.io.Files;
+import org.apache.commons.lang3.StringUtils;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,7 +52,7 @@ public class SimpleFormatWithPolicy extends PolicyAware implements Format {
         CheckResult checkResult;
         try {
             checkResult = new CheckResult(contentFile.getName(), this.getFormatName(), this.getVersion(), getAllCategoryNames());
-            String xml = FileUtils.readFileToString(contentFile);
+            String xml = StringUtils.join(Files.readLines(contentFile, Charset.defaultCharset()), "");
             checkResult.addAll(PolicyAware.policyValidationResult(new StreamSource(new ByteArrayInputStream(xml.getBytes())),
                     new StreamSource(getPolicy()), new HashSet<String>()));
         } catch (Exception e) {
