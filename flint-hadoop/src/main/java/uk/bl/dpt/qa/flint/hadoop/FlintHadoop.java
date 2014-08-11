@@ -194,7 +194,7 @@ public class FlintHadoop {
                         if((fileTXT!=null) && (fileTXT.exists())) fileTXT.delete();
                         if(fileZIP.exists()) {
                             // store zip file
-                            gFS.copyFromLocalFile(new Path(fileZIP.getAbsolutePath()), gOutputDir);
+                            gFS.copyFromLocalFile(false, false, new Path(fileZIP.getAbsolutePath()), gOutputDir);
                             fileZIP.delete();
                         }
                     }
