@@ -22,7 +22,7 @@ import org.apache.pdfbox.io.RandomAccessFile;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.apache.pdfbox.pdmodel.encryption.PDEncryption;
+import org.apache.pdfbox.pdmodel.encryption.PDEncryptionDictionary;
 import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.ValidationResult;
 import org.apache.pdfbox.preflight.exception.SyntaxValidationException;
@@ -42,6 +42,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -267,7 +268,7 @@ public class PDFBoxWrapper {
 			RandomAccess scratchFile = new RandomAccessFile(tmp, "rw");
 			PDDocument doc = PDDocument.loadNonSeq(new FileInputStream(pPDF), scratchFile);
 
-			PDEncryption dict = doc.getEncryption();
+			PDEncryptionDictionary dict = doc.getEncryptionDictionary();
 			if(dict!=null) {
 
 				//print encryption dictionary
