@@ -23,6 +23,12 @@ public class SpecificDrmChecks extends TimedTask {
     private Logger logger;
     private Set<String> patternFilter;
 
+    /**
+     * Create a SpeficDRMChecks Object that times out if calls take longer than expected
+     *
+     * @param timeout timeout to use
+     * @param patternFilter a set of strings indicating which categories to use and not
+     */
     public SpecificDrmChecks(long timeout, Set<String> patternFilter) {
         super(FixedCategories.NO_DRM_RIGHTS_FILE.toString(), timeout);
         this.patternFilter = patternFilter;

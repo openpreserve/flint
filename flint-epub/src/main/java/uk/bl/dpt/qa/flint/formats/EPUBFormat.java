@@ -129,6 +129,11 @@ public class EPUBFormat extends PolicyAware implements Format {
         return getClass().getResourceAsStream(SCH_POLICY);
     }
 
+    /**
+     * Helper method to get the schematron policy input stream as a static method
+     *
+     * @return InputStream that represents the schematron policy to check against
+     */
     public static InputStream getPolicyStatically() {
         return EPUBFormat.class.getResourceAsStream(SCH_POLICY);
     }

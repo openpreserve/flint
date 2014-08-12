@@ -46,8 +46,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * A superclass for the Controllers of flint-fx-direct and flint-fx-websocket providing elements
- * of the common workflow.
+ * A superclass for the Controllers of flint-fx providing elements
+ * of a common workflow.
  */
 public abstract class CommonController implements Initializable {
 

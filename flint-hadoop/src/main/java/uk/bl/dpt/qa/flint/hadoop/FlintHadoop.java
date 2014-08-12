@@ -106,14 +106,21 @@ public class FlintHadoop {
         private Flint gLint = null;
         private Path gOutputDir = null;
 
+        /**
+         * Creates a local temporary directory on the node and defines the central
+         * hdfs output directory as specified in the configuration.
+         *
+         * @param pContext the context bound to the mapReduce process
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
         public void setup(Context pContext) throws IOException, InterruptedException {
             super.setup(pContext);
             try {
                 gFS = FileSystem.get(pContext.getConfiguration());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.error("IOException while trying to read the configuration from hdfs.");
             }
 
             gTempDir = Tools.newTempDir();
@@ -122,9 +129,9 @@ public class FlintHadoop {
             try {
                 gLint = new Flint();
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                LOGGER.error("IllegalAccessException while trying to instantiate Flint: {}", e);
             } catch (InstantiationException e) {
-                e.printStackTrace();
+                LOGGER.error("InstantiationException while trying to instantiate Flint: {}", e);
             }
 
             gOutputDir = new Path(pContext.getConfiguration().get("mapred.output.dir"));
@@ -132,23 +139,38 @@ public class FlintHadoop {
         }
 
 
+        /**
+         * Deletes the local temporary directory on the node after every {@link #map} call.
+         *
+         * @param pContext the context bound to the mapReduce process
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
         public void cleanup(Context pContext) throws IOException, InterruptedException {
             super.cleanup(pContext);
-
-            // clean up temp dir
             if (gTempDir.exists()) {
                 FileUtil.deleteDirectory(gTempDir);
             }
 
         }
 
+        /**
+         * Runs the Flint check on a file at a given `hdfsFilePath` and does additional, optional, format-specific tasks
+         *
+         * @param pKey parameter unused in the map-phase.
+         * @param hdfsFilePath the hdfs path of the file to analise
+         * @param pContext the context bound to the mapReduce process
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
-        public void map(LongWritable pKey, Text pValue, Context pContext) throws IOException, InterruptedException {
+        public void map(LongWritable pKey, Text hdfsFilePath, Context pContext) throws IOException, InterruptedException {
 
+            File fileTXT = null;
             try {
                 // load file from HDFS
-                Path hdfsFile = new Path(pValue.toString());
+                Path hdfsFile = new Path(hdfsFilePath.toString());
                 File filePDF = new File(gTempDir.getAbsolutePath()+"/"+hdfsFile.getName());
 
                 List<String> generatedFiles = new LinkedList<String>();
@@ -165,7 +187,6 @@ public class FlintHadoop {
                 }
                 LOGGER.info("filePDF exists: {}", filePDF.exists());
 
-                File fileTXT = null;
                 //very simple workflow here - extract text from a PDF, generate checksum, zip the files
                 if(extractText) {
                     fileTXT = new File(filePDF.getAbsolutePath()+".txt");
@@ -191,7 +212,6 @@ public class FlintHadoop {
                         // clean up
                         if(filePDF.exists()) filePDF.delete();
                         if(fileXML.exists()) fileXML.delete();
-                        if((fileTXT!=null) && (fileTXT.exists())) fileTXT.delete();
                         if(fileZIP.exists()) {
                             // store zip file
                             gFS.copyFromLocalFile(false, false, new Path(fileZIP.getAbsolutePath()), gOutputDir);
@@ -205,7 +225,9 @@ public class FlintHadoop {
             } catch(Exception e) {
                 // TODO: is this what we want?:
                 LOGGER.error("Caught Exception: {}", e);
-                pContext.write(new Text("Exception: " + pValue.toString() + " " + e.getMessage()), new CheckResultText());
+                pContext.write(new Text("Exception: " + hdfsFilePath.toString() + " " + e.getMessage()), new CheckResultText());
+            } finally {
+                if((fileTXT!=null) && (fileTXT.exists())) fileTXT.delete();
             }
 
         }
@@ -243,12 +265,18 @@ public class FlintHadoop {
             }
         }
 
+        /**
+         * Deletes the local temporary directory on the node
+         *
+         * @param pContext the context bound to the mapReduce process
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
         public void cleanup(Context pContext) throws IOException, InterruptedException {
             super.cleanup(pContext);
-            // clean up temp dir
             if (gTempDir.exists()) {
-            	FileUtil.deleteDirectory(gTempDir);
+                FileUtil.deleteDirectory(gTempDir);
             }
         }
 
@@ -270,31 +298,22 @@ public class FlintHadoop {
             }
         }
 
+        /**
+         * Doesn't do anything by default but pipes the results from the map phase through.
+         *
+         * @param pKey
+         * @param checkResults
+         * @param pContext the context bound to the mapReduce process
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
-        public void reduce(Text pKey, Iterable<CheckResultText> pValues, Context pContext)
+        public void reduce(Text pKey, Iterable<CheckResultText> checkResults, Context pContext)
                 throws IOException, InterruptedException {
-
             if (pKey.toString().startsWith("Exception")) {
                 pContext.write(pKey, new CheckResultText());
             } else {
-                //InputStream zipStream = gFS.open(new Path(gInputDir+"/"+key));
-                //if(zipStream!=null) {
-                //    InputStream report = recoverStreamThatEndsWith(zipStream, ".xml");
-                //    if(report!=null) {
-                //        BufferedInputStream xml = new BufferedInputStream(report);
-                //        if(xml!=null) {
-                //            xml.mark(1024768);
-                //            String overall = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/@result");
-                //            xml.reset();
-                //            String wellFormed = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/checkCategory[@name='WELL_FORMED']/@result");
-                //            xml.reset();
-                //            String noDrm = Tools.getXpathVal(new CloseShieldInputStream(xml), "/flint/checkedFile/checkCategory[@name='NO_DRM']/@result");
-                //            xml.close();
-                //            collector.collect(key, new Text("\t,"+overall+","+wellFormed+","+noDrm+","));
-                //            return;
-                //        }
-                //    }
-                for (CheckResultText record : pValues) {
+                for (CheckResultText record : checkResults) {
                     pContext.write(new Text(pKey), record);
                 }
             }
@@ -316,7 +335,8 @@ public class FlintHadoop {
 
     /**
      * Main method
-     * @param args
+     * @param args the first and only expected item in the String[] is the path to the textfile
+     *             containing a list of paths of files to be examined, each path on a single line.
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException

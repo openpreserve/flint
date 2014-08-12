@@ -96,6 +96,8 @@ public class Flint {
      *
      * This constructor can overwrite default policy properties for each available format
      * if the supplied map contains a key with its name.
+     *
+     * @param policyMap the map to use for overriding defaults
      * @throws InstantiationException 
      * @throws IllegalAccessException 
      */
@@ -142,6 +144,12 @@ public class Flint {
         return fs;
     }
 
+    /**
+     * Gets the accepted mimetypes for each available format.
+     * @return a Collection of Strings representing these mimetypes
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     public static Collection<String> getAcceptedMimetypes() throws InstantiationException, IllegalAccessException {
         Collection<String> mTypes = new HashSet<String>();
         for (Format f : getAvailableFormats().values()) {
@@ -225,6 +233,15 @@ public class Flint {
 
     }
 
+    /**
+     * Checks a file or all files in a directory recursively
+     *
+     * @param inputFile a file or directory
+     * @param policyMap the map to use for overriding defaults
+     * @return a list of check-result lists, one list for each file (as it may have different format implementations)
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     public static List<List<CheckResult>> checkMany(File inputFile, Map<String, Set<String>> policyMap) throws InstantiationException, IllegalAccessException, IOException {
         return checkMany(inputFile, new Flint(policyMap));
     }
@@ -243,6 +260,11 @@ public class Flint {
         pOut.println("</flint>");
     }
 
+    /**
+     * Gets the Format instance for a given format name
+     * @param format the format name
+     * @return the Format instance
+     */
     public Format getFormat(String format) {
         for (Format f : this.formats) {
             if (f.getFormatName().equals(format)) return f;

@@ -52,8 +52,22 @@ public interface Format {
      */
     public Collection<String> acceptedMimeTypes();
 
+    /**
+     * Calculate and return the overall validation result for a given file in form of a
+     * {@link uk.bl.dpt.qa.flint.checks.CheckResult}.
+     *
+     * @param contentFile the file to examine
+     * @return the result of the validation process
+     */
     public CheckResult validationResult(File contentFile);
 
+    /**
+     * The check categories in a validation process can be statically defined in code, or
+     * possibly 'dynamically' set, as in a configuration file. This method shall define the
+     * static, fixed categories.
+     * @return  a Map with the category names as keys, and as values a map
+     * of all tests assigned to the specific category (category name, set of test names)
+     */
     public Map<String, Map<String, Set<String>>> getFixedCategories();
 
     /**

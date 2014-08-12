@@ -19,6 +19,14 @@ public class Wellformedness extends TimedTask {
     private Logger logger;
     private Set<String> patternFilter;
 
+    /**
+     * Constructor for Wellformedness.
+     *
+     * @param timeout the time [s] after which a TimeOutException is thrown and logged as
+     *                an 'erroneous' {@link uk.bl.dpt.qa.flint.checks.CheckCategory}
+     * @param patternFilter a set of strings that represent patterns to be included
+     *                      in following operations.
+     */
     public Wellformedness(long timeout, Set<String> patternFilter) {
         super(FixedCategories.WELL_FORMED_CALIBRE.toString(), timeout);
         this.patternFilter = patternFilter;

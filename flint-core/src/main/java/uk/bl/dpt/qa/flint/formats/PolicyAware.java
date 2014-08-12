@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public abstract class PolicyAware {
 
-    public Logger logger;
+    protected Logger logger;
 
     protected static Set<String> patternFilter = null;
     private static ValidatorFactory valFac;
@@ -130,7 +130,9 @@ public abstract class PolicyAware {
     }
 
     /**
-     * @return
+     * Gets the names of the policy categories as a collection of Strings.
+     *
+     * @return a Collection of Strings with the names of the policy categories
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws XPathExpressionException

@@ -54,19 +54,6 @@ public class PolicyPropertiesCreator {
      */
     private static final String namespace = "http://purl.oclc.org/dsdl/schematron";
 
-
-    public static void main(String[] args) {
-        try {
-            create("src/main/resources/uk.bl.dpt.qa.flint.pdf-policy-validate/policy.properties", null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Creates and returns map from a schematron schema file.
      * <br><br>
@@ -145,7 +132,7 @@ public class PolicyPropertiesCreator {
         return policyMap;
     }
 
-        /**
+    /**
      * Creates and returns a properties file from a schematron schema file.
      * <br><br>
      * A schematron file will have a structure like:

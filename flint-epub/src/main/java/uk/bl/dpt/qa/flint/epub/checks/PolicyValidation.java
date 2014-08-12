@@ -21,6 +21,14 @@ public class PolicyValidation extends TimedTask {
     private Logger logger;
     private Set<String> patternFilter;
 
+    /**
+     * Constructor for PolicyValidation.
+     *
+     * @param timeout the time [s] after which a TimeOutException is thrown and logged as
+     *                an 'erroneous' {@link uk.bl.dpt.qa.flint.checks.CheckCategory}
+     * @param patternFilter a set of strings that represent patterns to be included
+     *                      in following operations.
+     */
     public PolicyValidation(long timeout, Set<String> patternFilter) {
         super(FixedCategories.POLICY_VALIDATION.toString(), timeout);
         this.patternFilter = patternFilter;

@@ -63,7 +63,7 @@ public class PDFFormat extends PolicyAware implements Format {
     private final static long WRAPPER_TIMEOUT = 10 * 60;
 
     @SuppressWarnings("serial")
-	@Override
+    @Override
     public Map<String, Map<String, Set<String>>> getFixedCategories() {
         final Set<String> noDRM = new TreeSet<String>() {{
             add("checkDRMPDFBoxAbsolute");
@@ -145,13 +145,14 @@ public class PDFFormat extends PolicyAware implements Format {
 
     @Override
     public InputStream getPolicy() {
-        return PDFFormat.getPolicyInputStream();
-    }
-
-    public static InputStream getPolicyInputStream() {
         return PDFFormat.class.getResourceAsStream(SCH_POLICY);
     }
 
+    /**
+     * Helper method to get the schematron policy input stream as a static method
+     *
+     * @return InputStream that represents the schematron policy to check against
+     */
     public static InputStream getPolicyStatically() {
         return PDFFormat.class.getResourceAsStream(SCH_POLICY);
     }
