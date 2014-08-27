@@ -19,11 +19,13 @@ package uk.bl.dpt.qa.flint.formats;
 
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.checks.TimedValidation;
+import uk.bl.dpt.qa.flint.hadoop.AdditionalMapTasks;
+import uk.bl.dpt.qa.flint.hadoop.HadoopFormat;
+import uk.bl.dpt.qa.flint.hadoop.PDFMapTasks;
 import uk.bl.dpt.qa.flint.pdf.checks.FixedCategories;
 import uk.bl.dpt.qa.flint.pdf.checks.PolicyValidation;
 import uk.bl.dpt.qa.flint.pdf.checks.SpecificDrmChecks;
 import uk.bl.dpt.qa.flint.pdf.checks.Wellformedness;
-import uk.bl.dpt.utils.util.ResourceUtil;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
@@ -55,7 +57,7 @@ import java.util.TreeSet;
  * - LockLizard and HYPrLock emcapsulate pdfs in to a different drm-ed format
  * - Seems most PDF DRM uses Adobe Digital Editions
  */
-public class PDFFormat extends PolicyAware implements Format {
+public class PDFFormat extends PolicyAware implements Format, HadoopFormat {
 
     private final static String SCH_POLICY = "/pdf-policy-validate/pdf_policy_preflight_test.sch";
 
@@ -155,5 +157,10 @@ public class PDFFormat extends PolicyAware implements Format {
      */
     public static InputStream getPolicyStatically() {
         return PDFFormat.class.getResourceAsStream(SCH_POLICY);
+    }
+
+    @Override
+    public AdditionalMapTasks getAdditionalMapTasks() {
+        return new PDFMapTasks();
     }
 }

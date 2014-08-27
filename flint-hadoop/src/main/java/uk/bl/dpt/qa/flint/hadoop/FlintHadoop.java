@@ -32,23 +32,17 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.bl.dpt.qa.flint.Flint;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
-import uk.bl.dpt.qa.flint.pdf.converter.PDFToText;
+import uk.bl.dpt.qa.flint.formats.Format;
 import uk.bl.dpt.qa.flint.wrappers.Tools;
-import uk.bl.dpt.utils.checksum.ChecksumUtil;
 import uk.bl.dpt.utils.util.FileUtil;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -94,12 +88,6 @@ public class FlintHadoop {
      * Map class
      */
     public static class FlintMap extends Mapper<LongWritable, Text, Text, CheckResultText> {
-
-        // TODO: deal with these debug switches
-        private static final boolean extractText = true;
-        private static final boolean runFLint = true;
-        private static final boolean zipFlint = true;
-        private static boolean textExtractSuccess = false;
 
         private FileSystem gFS = null;
         private File gTempDir = null;
@@ -166,69 +154,36 @@ public class FlintHadoop {
          */
         @Override
         public void map(LongWritable pKey, Text hdfsFilePath, Context pContext) throws IOException, InterruptedException {
+            Path hdfsFile = new Path(hdfsFilePath.toString());
+            File localFile = new File(gTempDir.getAbsolutePath()+"/"+hdfsFile.getName());
 
-            File fileTXT = null;
-            try {
-                // load file from HDFS
-                Path hdfsFile = new Path(hdfsFilePath.toString());
-                File filePDF = new File(gTempDir.getAbsolutePath()+"/"+hdfsFile.getName());
-
-                List<String> generatedFiles = new LinkedList<String>();
-                HashMap<String, String> checksums = new HashMap<String, String>();
-
-                // if on a windows (for testing purposes) we have to useRawLocalFileSystem=true
-                // otherwise we get 'Cannot run program "cygpath"' (?)
-                if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                    gFS.copyToLocalFile(false, hdfsFile, new Path(filePDF.getAbsolutePath()), true);
-                    LOGGER.debug("Copying {} to {}", hdfsFile, filePDF.getAbsolutePath());
-                } else {
-                    gFS.copyToLocalFile(hdfsFile, new Path(filePDF.getAbsolutePath()));
-                    LOGGER.debug("Copying {} to {}", hdfsFile, filePDF.getAbsolutePath());
-                }
-                LOGGER.info("filePDF exists: {}", filePDF.exists());
-
-                //very simple workflow here - extract text from a PDF, generate checksum, zip the files
-                if(extractText) {
-                    fileTXT = new File(filePDF.getAbsolutePath()+".txt");
-                    textExtractSuccess = PDFToText.process(filePDF, fileTXT);
-                    generatedFiles.add(fileTXT.getName());
-                    checksums.put(fileTXT.getName(), ChecksumUtil.generateChecksum(fileTXT.getAbsolutePath()));
-                    LOGGER.debug("txt: {}, size: {}", fileTXT.getAbsolutePath(), fileTXT.length());
-                }
-
-                List<CheckResult> results;
-                if(runFLint) {
-                    results = gLint.check(filePDF);
-                    if (zipFlint) {
-                        File fileXML = new File(filePDF.getAbsolutePath()+".report.xml");
-                        File fileZIP = new File(filePDF.getAbsolutePath()+".zip");
-                        PrintWriter pw = new PrintWriter(new FileWriter(fileXML));
-                        Flint.printResults(results, pw);
-                        pw.close();
-                        generatedFiles.add(fileXML.getName());
-                        checksums.put(fileXML.getName(), ChecksumUtil.generateChecksum(fileXML.getAbsolutePath()));
-                        LOGGER.debug("xml: {}, size: {}", fileXML.getAbsolutePath(), fileXML.length());
-                        Tools.zipGeneratedFiles(textExtractSuccess, checksums, generatedFiles, fileZIP.getAbsolutePath(), gTempDir.getAbsolutePath()+"/");
-                        // clean up
-                        if(filePDF.exists()) filePDF.delete();
-                        if(fileXML.exists()) fileXML.delete();
-                        if(fileZIP.exists()) {
-                            // store zip file
-                            gFS.copyFromLocalFile(false, false, new Path(fileZIP.getAbsolutePath()), gOutputDir);
-                            fileZIP.delete();
-                        }
-                    }
-                }
-
-                pContext.write(new Text(results.get(0).getFilename()), new CheckResultText(results.get(0)));
-
-            } catch(Exception e) {
-                // TODO: is this what we want?:
-                LOGGER.error("Caught Exception: {}", e);
-                pContext.write(new Text("Exception: " + hdfsFilePath.toString() + " " + e.getMessage()), new CheckResultText());
-            } finally {
-                if((fileTXT!=null) && (fileTXT.exists())) fileTXT.delete();
+            // if on a windows (for testing purposes) we have to useRawLocalFileSystem=true
+            // otherwise we get 'Cannot run program "cygpath"' (?)
+            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                gFS.copyToLocalFile(false, hdfsFile, new Path(localFile.getAbsolutePath()), true);
+                LOGGER.debug("Copying {} to {}", hdfsFile, localFile.getAbsolutePath());
+            } else {
+                gFS.copyToLocalFile(hdfsFile, new Path(localFile.getAbsolutePath()));
+                LOGGER.debug("Copying {} to {}", hdfsFile, localFile.getAbsolutePath());
             }
+            LOGGER.info("localFile exists: {}", localFile.exists());
+
+            List<CheckResult> results = gLint.check(localFile);
+
+            for (CheckResult result: results) {
+                try {
+                    HadoopFormat hadoopFormat = (HadoopFormat) gLint.getFormat(result.getFormat());
+                    AdditionalMapTasks additionalTasks = hadoopFormat.getAdditionalMapTasks();
+                    if (additionalTasks != null) {
+                        additionalTasks.map(gFS, gTempDir, gOutputDir, localFile, results);
+                    }
+                } catch (ClassCastException e) {
+                    throw new RuntimeException("ClassCastException thrown; maybe " + gLint.getClass() +
+                            " is no implementation of HadoopFormat? here's the exception: " + e);
+                }
+            }
+
+            pContext.write(new Text(results.get(0).getFilename()), new CheckResultText(results.get(0)));
 
         }
 
@@ -249,8 +204,7 @@ public class FlintHadoop {
             try {
                 gFS = FileSystem.get(pContext.getConfiguration());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.error("IOException while trying to read the configuration from hdfs.");
             }
 
             gTempDir = Tools.newTempDir();

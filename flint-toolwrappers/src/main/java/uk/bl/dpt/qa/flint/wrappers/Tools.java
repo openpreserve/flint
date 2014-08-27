@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
@@ -60,7 +60,7 @@ public class Tools {
 	 * @param pTempDir local temporary directory that contains files to zip 
 	 * @throws IOException file access error
 	 */
-	public static void zipGeneratedFiles(boolean pSuccess, HashMap<String, String> pChecksums, 
+	public static void zipGeneratedFiles(boolean pSuccess, Map<String, String> pChecksums,
 			List<String> pGeneratedFiles, String pZipFile, String pTempDir) throws IOException {
 		
 		final int BUFSIZE = 32768;

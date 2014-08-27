@@ -48,7 +48,7 @@ public class CoreApp {
         LOGGER.info("Java version: {}", getJavaVersion());
         ArgumentParser parser = ArgumentParsers.newArgumentParser("FLint")
                 .defaultHelp(true)
-                .description("A program to detect potential DRM issues within files.");
+                .description("A program for policy-driven file/format validation.");
 
         try {
             Map<String, Format> formats = getAvailableFormats();
