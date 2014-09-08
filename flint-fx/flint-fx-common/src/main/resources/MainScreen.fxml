@@ -30,7 +30,7 @@
 <GridPane.margin>
 <Insets />
 </GridPane.margin>
-<center><TextField fx:id="inputPath" editable="false" text="click to select an input file to analise" BorderPane.alignment="CENTER" />
+<center><TextField fx:id="inputPath" editable="false" text="click to select an input file to analyse" BorderPane.alignment="CENTER" />
 </center>
 <top><Text strokeType="OUTSIDE" strokeWidth="0.0" text="input" BorderPane.alignment="CENTER" />
 </top>
