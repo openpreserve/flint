@@ -45,7 +45,7 @@ public abstract class PolicyAware {
 
     protected Logger logger;
 
-    protected static Set<String> patternFilter = null;
+    protected Set<String> patternFilter = null;
     private static ValidatorFactory valFac;
 
     /**
