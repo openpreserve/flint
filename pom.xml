@@ -22,7 +22,7 @@
         <!-- command line interface -->
         <module>flint-cli</module>
         <!-- javafx UI -->
-        <!-- <module>flint-fx</module> -->
+        <module>flint-fx</module>
         <!-- to run on a hadoop cluster -->
         <module>flint-hadoop</module>
         <!-- an api to help extending a format's hadoop capabilities -->
