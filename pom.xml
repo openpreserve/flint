@@ -63,7 +63,7 @@
         <javax.websocket-api.version>1.0</javax.websocket-api.version>
         <jboss-websocket-api_1.0_spec>1.0.0.Final</jboss-websocket-api_1.0_spec>
         <jetty.version>9.1.3.v20140225</jetty.version>
-        <jhove.version>1.10</jhove.version>
+        <jhove.version>1.12.0-SNAPSHOT</jhove.version>
         <junit.version>4.11</junit.version>
         <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
@@ -262,7 +262,7 @@
                 <version>${epubcheck.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.opf-labs.jhove</groupId>
+                <groupId>edu.harvard.hul.ois</groupId>
                 <artifactId>jhove</artifactId>
                 <version>${jhove.version}</version>
             </dependency>

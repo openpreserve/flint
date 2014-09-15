@@ -1,12 +1,11 @@
 language: java
 jdk:
 # jhove-old fails to build with oraclejdk8
-#  - oraclejdk8
+  - oraclejdk8
   - oraclejdk7
   - openjdk7
 before_install:
-  - git clone https://github.com/openplanets/jhove-old.git
-  - cd jhove-old/jhove-releases
+  - git clone https://github.com/bl-dpt/jhove.git
   - mvn clean install -DskipTests=true
   - cd ../..
   - git clone https://github.com/bl-dpt/dptutils.git

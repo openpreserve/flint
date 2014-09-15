@@ -31,7 +31,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.opf-labs.jhove</groupId>
+            <groupId>edu.harvard.hul.ois</groupId>
 			<artifactId>jhove</artifactId>
 		</dependency>
 		<!-- note that to use jhove2 a different method of making a single jar
