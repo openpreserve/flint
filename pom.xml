@@ -1,13 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.bl.dpt.qa</groupId>
     <artifactId>flint</artifactId>
     <packaging>pom</packaging>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Flint - a File/Format validation tool</name>
 
     <modules>
@@ -24,7 +21,7 @@
         <!-- the following are different use-case specific entries to flint -->
         <!-- command line interface -->
         <module>flint-cli</module>
-        <!-- javafx UI -->
+        <!-- javafx UI, now activated by profile-->
         <!--<module>flint-fx</module>-->
         <!-- to run on a hadoop cluster -->
         <module>flint-hadoop</module>
@@ -42,7 +39,6 @@
 				<module>flint-fx</module>
 			</modules>
 		</profile>
-	
 	</profiles>
 	
     <properties>

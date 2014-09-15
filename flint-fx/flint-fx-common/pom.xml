@@ -6,7 +6,7 @@
     <parent>
         <artifactId>flint-fx</artifactId>
         <groupId>uk.bl.dpt.qa</groupId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>flint-fx-common</artifactId>
