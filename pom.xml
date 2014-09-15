@@ -25,13 +25,26 @@
         <!-- command line interface -->
         <module>flint-cli</module>
         <!-- javafx UI -->
-        <!-- <module>flint-fx</module> -->
+        <!--<module>flint-fx</module>-->
         <!-- to run on a hadoop cluster -->
         <module>flint-hadoop</module>
         <!-- an api to help extending a format's hadoop capabilities -->
         <module>flint-hadoop-api</module>
     </modules>
 
+	<profiles>
+		<profile>
+			<id>jdk8plus</id>
+			<activation>
+				<jdk>1.8</jdk>
+			</activation>
+			<modules>
+				<module>flint-fx</module>
+			</modules>
+		</profile>
+	
+	</profiles>
+	
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.7</java.version>
