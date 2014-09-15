@@ -7,13 +7,8 @@ jdk:
 before_install:
   - git clone https://github.com/bl-dpt/jhove.git
   - mvn clean install -DskipTests=true
-  - cd ../..
+  - cd ..
   - git clone https://github.com/bl-dpt/dptutils.git
   - cd dptutils
   - mvn clean install -DskipTests=true
   - cd ..
-install:
-  # this skips the flint-fx module as it requires jdk8 and that would break jhove.. ..and there aren't tests anyway yet for flint-fx..
-  - mvn -pl flint-toolwrappers,flint-core,flint-hadoop-api,flint-pdf,flint-epub,flint-register,flint-cli,flint-hadoop clean install -DskipTests=true
-script:
-  - mvn -pl flint-toolwrappers,flint-core,flint-hadoop-api,flint-pdf,flint-epub,flint-register,flint-cli,flint-hadoop test
