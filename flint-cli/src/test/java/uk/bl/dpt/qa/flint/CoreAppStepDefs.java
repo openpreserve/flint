@@ -68,7 +68,7 @@ public class CoreAppStepDefs {
         public void a_results_file_should_be_produced_with_the_following_content(String fileName, String expectedContent) throws Throwable {
             File resultsFile = new File(tempDir, fileName);
             String results = StringUtils.join(Files.readLines(resultsFile, Charset.defaultCharset()), "");
-            assertThat(results.replaceAll("\\s+", "")).isEqualTo(expectedContent.replaceAll("\r\n|\n|\\s+", ""));
+            assertThat(results.replaceAll("\\s+|totalCheckTime='\\d+'", "")).isEqualTo(expectedContent.replaceAll("\r\n|\n|\\s+|totalCheckTime='\\d+'", ""));
         }
 
 }
