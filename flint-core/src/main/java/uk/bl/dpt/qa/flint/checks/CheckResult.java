@@ -108,17 +108,17 @@ public class CheckResult {
 
     /**
      * Test whether or not all the tests in this CheckResult were passed
-     * @return --> true if *none* of the child-categories is unhappy and at least
-     * one child-category ran successfully and is happy<br>
+     * @return --> false if any child-categories is unhappy<br>
      * --> null if there aren't child categories at all or whether they report error(null) regarding their happiness<br>
-     * otherwise --> false.
+     * otherwise --> true.
      */
     public Boolean isHappy() {
         if (isErroneous()) return null;
+        if (this.categories.isEmpty()) return null;
         for (CheckCategory cc : this.categories.values()) {
             // if we know of a child-check that ran successfully and FAILED,
             // we are definitely not happy in total.
-            if (cc != null && !cc.isErroneous() && !cc.isHappy()) return false;
+        	if (cc!=null && !cc.isHappy()) return false;
         }
         return true;
     }
@@ -126,12 +126,13 @@ public class CheckResult {
     /**
      * Find out if any CheckCategory in this CheckResult reports an error
      * @return true if an error is contained in a CheckCategory within this CheckResult
+     * 			or if there are no CheckCategory's in this CheckResult.
      */
     public boolean isErroneous() {
-        for (CheckCategory cc : this.categories.values()) {
-            if (!cc.isErroneous()) return false;
+    	for (CheckCategory cc : this.categories.values()) {
+            if (cc!=null && cc.isErroneous()) return true;
         }
-        return true;
+    	return this.categories.isEmpty();	// true if empty, otherwise false
     }
 
     /**

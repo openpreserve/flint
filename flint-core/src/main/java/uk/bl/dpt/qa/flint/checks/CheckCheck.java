@@ -36,8 +36,8 @@ import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_XML10;
 public class CheckCheck {
 
     private String name;
-    private Boolean result; // can be null
-    private Integer errorCount; // can be null
+    private Boolean result		= null; // Initially null; can be null
+    private Integer errorCount	= null; // Initially null; can be null
 
     /**
      * Construct a CheckCheck object

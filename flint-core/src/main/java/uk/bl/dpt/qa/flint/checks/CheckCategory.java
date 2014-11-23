@@ -58,18 +58,18 @@ public class CheckCategory {
     }
 
     /**
-     * Test whether or not all the tests in this CheckCatergory were passed 
-     * @return  --> true if *none* of the child-tests is unhappy and at least
-     * one child-test ran successfully and is happy<br>
-     * --> null if there aren't child tests at all or whether they report error(null) regarding their happiness<br>
-     * otherwise --> false.
+     * Test whether all the tests in this CheckCatergory were passed 
+     * @return  --> false if any child-tests is unhappy<br>
+     * --> null if there aren't child-tests at all or whether they report error(null) regarding their happiness<br>
+     * otherwise --> true.
      */
     public Boolean isHappy() {
         if (isErroneous()) return null;
+        if (this.checks.isEmpty()) return null;
         for (CheckCheck check : this.checks.values()) {
             // if we know of a child-check that ran successfully and FAILED,
             // we are definitely not happy in total.
-            if (check != null && !check.isErroneous() && !check.isHappy()) return false;
+        	if(check!=null && !check.isHappy()) return false;
         }
         return true;
     }
@@ -77,12 +77,13 @@ public class CheckCategory {
     /**
      * Find out if any CheckCheck in this CheckCategory reports an error
      * @return true if an error is contained in a CheckCheck within this CheckCategory
+     * 			or if there are no CheckChecks in this CheckCategory
      */
     public boolean isErroneous() {
         for (CheckCheck check : this.checks.values()) {
-            if (!check.isErroneous()) return false;
+            if (check != null && check.isErroneous()) return true;
         }
-        return true;
+        return this.checks.isEmpty();	// true if empty
     }
 
     /**

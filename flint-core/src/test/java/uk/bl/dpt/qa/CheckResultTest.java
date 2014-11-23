@@ -84,11 +84,11 @@ public class CheckResultTest {
         assertThat(result.isHappy()).isEqualTo(null);
         assertThat(result.getResult()).isEqualTo("erroneous");
 
-        //    ..if at least one category is not erroneous the result is neither
+        //    ..if at least one category is erroneous the result is also
         CheckCategory cc3 = new CheckCategory("testCc3");
         cc3.add(new CheckCheck("testCheck3", false, null));
         result.add(cc3);
-        assertThat(result.isErroneous()).isEqualTo(false);
+        assertThat(result.isErroneous()).isEqualTo(true);
     }
 
     @Test

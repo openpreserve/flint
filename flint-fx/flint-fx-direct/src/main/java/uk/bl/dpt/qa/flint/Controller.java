@@ -17,6 +17,7 @@
  */
 package uk.bl.dpt.qa.flint;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import uk.bl.dpt.qa.flint.checks.CheckResult;
 import uk.bl.dpt.qa.flint.utils.PolicyPropertiesCreator;
@@ -50,9 +51,19 @@ public class Controller extends CommonController {
                     outFile = new File(outputD, "flint_results_" + inputFile.getName() + ".xml");
                     out = new PrintWriter(new FileWriter(outFile));
                     logger.info("Analysis done, results: {}", results);
-                    String passed = (results.get(0).isHappy() ? "*passed*." : "*failed*.");
+                    CheckResult res = results.get(0);
+                    Boolean happy = Boolean.FALSE;
+                    if(res!=null){
+                    	happy = res.isHappy(); //results.get(0).isHappy();
+                    }
+                    String passed = ((happy!=null)&&happy ? "*passed*." : "*failed*.");
                     logBookContent += "\n    Analysis done, overall result: " + passed;
                     updateMessage(logBookContent);
+                    Platform.runLater(new Runnable() {
+                        @Override public void run() {
+                        	setResults(results);
+                        }
+                    });
                     Flint.printResults(results, out);
                     out.close();
                     logger.info("results written to {}", outFile.getPath());

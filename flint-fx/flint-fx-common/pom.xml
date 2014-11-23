@@ -12,6 +12,11 @@
     <artifactId>flint-fx-common</artifactId>
 
     <dependencies>
+    	<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>flint-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>flint-toolwrappers</artifactId>

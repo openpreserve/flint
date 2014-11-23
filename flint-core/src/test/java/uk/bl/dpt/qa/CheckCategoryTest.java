@@ -72,9 +72,9 @@ public class CheckCategoryTest {
         assertThat(cc.isErroneous()).isEqualTo(true);
         assertThat(cc.isHappy()).isEqualTo(null);
         assertThat(cc.getResult()).isEqualTo("error");
-        //    ..if at least one check is not erroneous the category is neither
+        //    ..if at least one check is erroneous, the category is also
         cc.add(new CheckCheck("testCheck3", false, null));
-        assertThat(cc.isErroneous()).isEqualTo(false);
+        assertThat(cc.isErroneous()).isEqualTo(true);
     }
 
 

@@ -28,6 +28,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -39,11 +41,15 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import uk.bl.dpt.qa.flint.checks.CheckResult;
+import uk.bl.dpt.qa.flint.checks.CheckCategory;
 
 /**
  * A superclass for the Controllers of flint-fx providing elements
@@ -162,6 +168,7 @@ public abstract class CommonController implements Initializable {
                 logger.info("Creating checkbox for policy pattern {}", pattern.getKey());
                 CheckBox checkBox = new CheckBox();
                 checkBox.setText(pattern.getKey());
+                checkBox.setTextFill(Paint.valueOf("black"));
                 checkBox.setSelected(true);
                 policyPatterns.getChildren().add(checkBox);
             }
@@ -170,6 +177,28 @@ public abstract class CommonController implements Initializable {
         } catch (Exception e) {
             popupError(e);
         }
+    }
+    
+    /**
+     * Provides a visual indication of the results from processing the file
+     */
+    public void setResults(List<CheckResult> results){
+    	CheckResult result = (CheckResult) results.get(0);
+    	
+    	for (Node checkBoxNode : policyPatterns.getChildren()) {
+            if (!(checkBoxNode instanceof CheckBox)) continue;
+            // Process the checkbox node and set the text colour depending
+            // on CheckResult output
+            CheckBox checkBox = (CheckBox) checkBoxNode;
+            CheckCategory checkCat = result.get(checkBox.getText());
+            if(checkCat==null){
+            	checkBox.setTextFill(Paint.valueOf("black"));
+            } else if (checkCat.isHappy()){
+            	checkBox.setTextFill(Paint.valueOf("green"));
+            } else {
+            	checkBox.setTextFill(Paint.valueOf("red"));
+            }
+    	}
     }
 
     /**
