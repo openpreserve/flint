@@ -13,6 +13,7 @@
         <!-- all implementations of the api's interfaces -->
         <module>flint-pdf</module>
         <module>flint-epub</module>
+        <module>flint-mobi</module>
         <!-- a collection of third-party tools wrapped in a standard way of accessing them -->
         <module>flint-toolwrappers</module>
         <!-- module to register all known format implementations -->
