@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import uk.bl.dpt.qa.flint.checks.CheckCategory;
 import uk.bl.dpt.qa.flint.checks.CheckCheck;
 import uk.bl.dpt.qa.flint.checks.TimedTask;
+import uk.bl.dpt.qa.flint.formats.MobiBook;
 import uk.bl.dpt.qa.flint.mobi.checks.FixedCategories;
 
 
@@ -55,8 +56,15 @@ public class SpecificDrmChecks extends TimedTask {
         return cmap;
     }
 
-    private boolean checkForEncryption(File contentFile) {
-        return false;
+    private boolean checkForEncryption(File contentFile) throws Exception {
+        boolean result = true;
+        
+        MobiBook mobiBook = new MobiBook(contentFile);
+        if (!mobiBook.isValid()) throw new Exception("Not a mobibook formatted file");
+        
+        result = mobiBook.getMobiHeader().hasDRM();
+        
+        return result;
     }
 
 }

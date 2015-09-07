@@ -82,6 +82,7 @@ public class MobiFormat  extends PolicyAware implements Format {
                 pFile.getName().toLowerCase().endsWith(".mobi")
                 || pFile.getName().toLowerCase().endsWith(".azw")
                 || pFile.getName().toLowerCase().endsWith(".azw3")
+                || pFile.getName().toLowerCase().endsWith(".prc")
                );
     }
 

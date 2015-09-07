@@ -129,7 +129,7 @@ public class MobiBook {
     }
     
     
-    class PalmDatabaseHeader {
+    public class PalmDatabaseHeader {
         
         private ByteBuffer palmDocHeader = null;
         
@@ -165,7 +165,7 @@ public class MobiBook {
         }
     }
     
-    class MobiHeader extends Record {
+    public class MobiHeader extends Record {
 
         public MobiHeader(DataInputStream is, int position) throws IOException {
             super(is, position);
@@ -262,7 +262,7 @@ public class MobiBook {
     /**
      * A container for a generic Palm Database Record
      */
-    class Record {
+    public class Record {
         
         protected ByteBuffer record = null;
         
