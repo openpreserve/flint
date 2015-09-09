@@ -3,6 +3,7 @@ package uk.bl.dpt.qa.flint.formats;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.bl.dpt.qa.flint.formats.MobiBook.MobiHeader;
@@ -38,10 +39,11 @@ public class MobiBookTest {
         assertEquals(2, header.getMobiType());
         assertEquals(0xFFFFFFFF, header.getDRMOffset());
         assertEquals(0, header.getDRMCount());
+        assertEquals(" ", header.getFullName());
     }
     
     @Test
-    public void testDRMMobiHeader() {
+    public void testNoDRMMobiHeader() {
         MobiBook mobiBook = new MobiBook(MobiBookTest.class.getResourceAsStream("/mobisamples/lorem-ipsum.azw3"));
         MobiHeader header = mobiBook.getMobiHeader();
         
@@ -51,6 +53,24 @@ public class MobiBookTest {
         assertEquals(2, header.getMobiType());
         assertEquals(0xFFFFFFFF, header.getDRMOffset());
         assertEquals(0, header.getDRMCount());
+        assertEquals("Unknown", header.getFullName());
+    }
+    
+    /*
+     * test ignored because we don't have permission to distribute the test file. 
+     */
+    @Test @Ignore
+    public void testDRMMobiHeader() {
+        MobiBook mobiBook = new MobiBook(MobiBookTest.class.getResourceAsStream("/mobisamples/B00968FPDE_EBOK.prc"));
+        MobiHeader header = mobiBook.getMobiHeader();
+        
+        assertTrue(header.hasDRM());
+        assertEquals(17480, header.getCompression());
+        assertEquals(2, header.getEncryptionType());
+        assertEquals(2, header.getMobiType());
+        assertEquals(1320, header.getDRMOffset());
+        assertEquals(1, header.getDRMCount());
+        assertEquals("The Definitive Guide to Customer Relationship Management (Collection)", header.getFullName());
     }
     
 
