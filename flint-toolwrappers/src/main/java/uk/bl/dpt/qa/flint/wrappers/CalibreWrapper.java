@@ -66,6 +66,7 @@ public class CalibreWrapper {
 		Map<String, String> osMap = new HashMap<String, String>() {{
             put("windows", "c:/bin/calibre/calibre2/" + "ebook-convert.exe");
             put("linux",  "/usr/bin/" + "ebook-convert");
+            put("mac os x", "/Applications/calibre.app/Contents/MacOS/" + "ebook-convert");
         }};
 
         String os = System.getProperty("os.name").toLowerCase();
