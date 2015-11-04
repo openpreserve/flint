@@ -95,7 +95,7 @@ public class CalibreWrapper {
      * @return true if true, false if false :-)
      */
     public static boolean calibreIsAvailable() {
-        return CALIBRE_CONVERT != null;
+        return CALIBRE_CONVERT != null && "true".equalsIgnoreCase(System.getProperty("enable-calibre", "true"));
     }
 
     /**
