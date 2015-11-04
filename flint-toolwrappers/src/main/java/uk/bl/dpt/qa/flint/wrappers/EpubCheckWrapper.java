@@ -36,7 +36,7 @@ public class EpubCheckWrapper {
 
     static Logger LOGGER = LoggerFactory.getLogger(EpubCheckWrapper.class);
 
-    private static Map<String, Report> miniCache = new HashMap<String, Report>();
+    private static Map<String, XmlReportWithMessageIds> miniCache = new HashMap<String, XmlReportWithMessageIds>();
 
     private EpubCheckWrapper() {}
 
@@ -47,7 +47,7 @@ public class EpubCheckWrapper {
      * @throws IOException
      */
     public static StreamSource check(File file) throws IOException {
-        Report report = miniCache.get(file.getAbsolutePath());
+        XmlReportWithMessageIds report = miniCache.get(file.getAbsolutePath());
         File reportFile = null;
         if (report == null) {
             reportFile = File.createTempFile("epubcheck-report", "-for-" + file.getName() + ".xml");
@@ -57,6 +57,8 @@ public class EpubCheckWrapper {
             report.generate();
             LOGGER.info("Generated EpubCheck report at {}");
             miniCache.put(file.getAbsolutePath(), report);
+        } else {
+            reportFile = report.getReportFile();
         }
         return new StreamSource(reportFile);
     }

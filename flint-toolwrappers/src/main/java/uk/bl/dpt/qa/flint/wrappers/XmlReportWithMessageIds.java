@@ -29,9 +29,13 @@ import java.io.File;
  * (based on Enums) as message content.
  */
 public class XmlReportWithMessageIds extends XmlReportImpl {
+    
+    private File reportFile;
 
     public XmlReportWithMessageIds(File out, String ePubName, String versionEpubCheck) {
         super(out, ePubName, versionEpubCheck);
+        
+        this.reportFile = out;
     }
 
     @Override
@@ -45,6 +49,10 @@ public class XmlReportWithMessageIds extends XmlReportImpl {
         
         Message myMessage = new MyMessage(message.getID(), message.getSeverity(), message.getMessage(), message.getSuggestion());
         super.message(myMessage, location, arg);
+    }
+    
+    public File getReportFile() {
+        return reportFile;
     }
 
 }
