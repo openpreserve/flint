@@ -146,30 +146,35 @@ public class ExiftoolWrapper {
 		
 		boolean ret = false;
 		
-		File output = runExiftool(pFile);
-		
-		/*
-		 * NOTE: we can do more than just detect the presence of DRM with Exiftool (see outputs)
-		 * Might want to add more granular approach?
-		 */
-		
-		Scanner scanner = null;
+		File output = null;
 		try {
-			scanner = new Scanner(new FileInputStream(output));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		//just try and find the first occurrence of PDF:Encryption
-		//i.e. this is an ugly way around rdf namespaces and xpath
-		String found = scanner.findWithinHorizon("PDF:Encryption", 0);
-		scanner.close();
+		    output = runExiftool(pFile);
 		
-		if(found!=null) {
-			//i.e. drm detected
-			ret = true;
-			//System.out.println("DRM detected with Exiftool");
+    		/*
+    		 * NOTE: we can do more than just detect the presence of DRM with Exiftool (see outputs)
+    		 * Might want to add more granular approach?
+    		 */
+    		
+    		Scanner scanner = null;
+    		try {
+    			scanner = new Scanner(new FileInputStream(output));
+    		} catch (FileNotFoundException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    
+    		//just try and find the first occurrence of PDF:Encryption
+    		//i.e. this is an ugly way around rdf namespaces and xpath
+    		String found = scanner.findWithinHorizon("PDF:Encryption", 0);
+    		scanner.close();
+    		
+    		if(found!=null) {
+    			//i.e. drm detected
+    			ret = true;
+    			//System.out.println("DRM detected with Exiftool");
+    		}
+		} finally {
+		    if (output != null) output.delete();
 		}
 		
 		return ret;

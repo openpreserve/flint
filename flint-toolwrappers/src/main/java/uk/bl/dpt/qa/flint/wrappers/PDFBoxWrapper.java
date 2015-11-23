@@ -164,12 +164,14 @@ public class PDFBoxWrapper {
         // if preflight passes the file then try and extract the text from the file
         // this should be more robust at finding errors than load/save but it's
         // still not ideal
-        File pTemp;
+        File pTemp = null;
         try {
             pTemp = File.createTempFile("flint-temp-", ".pdfbox.txt");
             pTemp.deleteOnExit();
         } catch (IOException e) {
             return false;
+        } finally {
+            if (pTemp != null) pTemp.delete();
         }
         return true;
         //return extractTextFromPDF(pFile, pTemp, true);
@@ -183,6 +185,7 @@ public class PDFBoxWrapper {
 	public static boolean loadSavePDF(File pFile) {
 		boolean ret = false;
 
+		File temp = null;
 		try {
 
 			// Note that this test passes files that fail to open in Acrobat
@@ -191,7 +194,7 @@ public class PDFBoxWrapper {
 
 			PDFParser parser = new PDFParser(new FileInputStream(pFile));
 			parser.parse();
-			File temp = File.createTempFile("flint-temp-"+pFile.getName()+"-", ".pdf");
+			temp = File.createTempFile("flint-temp-"+pFile.getName()+"-", ".pdf");
 			parser.getPDDocument().save(temp);
 			parser.getDocument().close();
 			temp.deleteOnExit();
@@ -202,6 +205,8 @@ public class PDFBoxWrapper {
 			// PDFBox state that these files have errors and their parser is correct
 			// The only way to find out that the parser doesn't like it is to catch
 			// a general Exception.
+		} finally {
+		    if (temp != null) temp.delete();
 		}
 		return ret;
 	}
@@ -213,11 +218,13 @@ public class PDFBoxWrapper {
 	 */
 	public static boolean hasDRM(File pFile) {
 		boolean ret = false;
+		
+		File tmp = null;
 		try {
 			System.setProperty("org.apache.pdfbox.baseParser.pushBackSize", "1024768");
 			// NOTE: we use loadNonSeq here as it is the latest parser
 			// load() and parser.parse() have hung on test files
-			File tmp = File.createTempFile("flint-", ".tmp");
+			tmp = File.createTempFile("flint-", ".tmp");
 			tmp.deleteOnExit();
 			RandomAccess scratchFile = new RandomAccessFile(tmp, "rw");
 			PDDocument doc = PDDocument.loadNonSeq(new FileInputStream(pFile), scratchFile);
@@ -245,6 +252,8 @@ public class PDFBoxWrapper {
 			// DRM or not.  Return false and hope it is detected elsewhere.
 
 			ret = false;
+		} finally {
+		    if (tmp != null) tmp.delete();
 		}
 		return ret;
 	}
@@ -259,11 +268,12 @@ public class PDFBoxWrapper {
 
 		boolean ret = false;
 
+		File tmp = null;
 		try {
 			System.setProperty("org.apache.pdfbox.baseParser.pushBackSize", "1024768");
 			// NOTE: we use loadNonSeq here as it is the latest parser
 			// load() and parser.parse() have hung on test files
-			File tmp = File.createTempFile("flint-", ".tmp");
+			tmp = File.createTempFile("flint-", ".tmp");
 			tmp.deleteOnExit();
 			RandomAccess scratchFile = new RandomAccessFile(tmp, "rw");
 			PDDocument doc = PDDocument.loadNonSeq(new FileInputStream(pPDF), scratchFile);
@@ -309,6 +319,8 @@ public class PDFBoxWrapper {
 
 		} catch (Exception e) {
            LOGGER.warn("Exception while doing granular DRM checks leads to invalidity: {}", e);
+		} finally {
+		    if (tmp != null) tmp.delete();
 		}
 
 		return ret;

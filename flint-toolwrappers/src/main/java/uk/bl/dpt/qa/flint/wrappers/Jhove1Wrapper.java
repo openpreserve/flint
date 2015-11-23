@@ -76,8 +76,10 @@ public class Jhove1Wrapper {
 	 */
 	public static boolean isValid(File pFile) {
 		boolean ret = false;
+		
+		File temp = null;
 		try {
-			File temp = File.createTempFile("jhove-output-", ".xml");
+			temp = File.createTempFile("jhove-output-", ".xml");
 			String[] inputs = new String[] { pFile.getAbsolutePath() };
 			jhove.dispatch(app, null, null, handler, temp.getAbsolutePath(), inputs);
 			
@@ -94,10 +96,10 @@ public class Jhove1Wrapper {
 				//System.out.println(temp.getAbsolutePath()+": "+status+", "+status.length());
 			}
             LOGGER.warn("jhove thinks it is: {}", status.toLowerCase());
-			temp.delete();
-
 		} catch (Exception e) {
 			LOGGER.warn("Caught exception: {}", e);
+		} finally {
+		    if (temp != null) temp.delete();
 		}
 
 		return ret;

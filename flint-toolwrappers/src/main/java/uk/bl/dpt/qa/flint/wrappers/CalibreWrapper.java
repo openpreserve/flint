@@ -179,8 +179,9 @@ public class CalibreWrapper {
 
 		//we need to redirect stderr to stdout otherwise bad things happen if drm is detected and stderr is written to first
 		ToolRunner runner = new ToolRunner(true);
+		File newEbook = null;
 		try {
-			File newEbook = File.createTempFile(pFile.getName()+"-", ".txt");
+			newEbook = File.createTempFile(pFile.getName()+"-", ".txt");
 			newEbook.deleteOnExit();
 			List<String> commandLine = new ArrayList<String>();
 			commandLine.addAll(CALIBRE_CONVERT);
@@ -207,6 +208,8 @@ public class CalibreWrapper {
 			return ret;
         } catch (Exception e) {
             LOGGER.error("Exception while trying to validate with Calibre: {}", e);
+        } finally {
+            if (newEbook != null) newEbook.delete();
         }
 		return ret;
 	}

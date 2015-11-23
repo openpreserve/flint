@@ -17,15 +17,18 @@
 package uk.bl.dpt.qa.flint.wrappers;
 
 import com.adobe.epubcheck.api.EpubCheck;
-import com.adobe.epubcheck.api.Report;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper for EpubCheck library
@@ -36,7 +39,21 @@ public class EpubCheckWrapper {
 
     static Logger LOGGER = LoggerFactory.getLogger(EpubCheckWrapper.class);
 
-    private static Map<String, XmlReportWithMessageIds> miniCache = new HashMap<String, XmlReportWithMessageIds>();
+    private static Cache<String, XmlReportWithMessageIds> miniCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .removalListener(new RemovalListener<String, XmlReportWithMessageIds>() {
+
+                // remove the temporary file when the entry is removed from the cache
+                @Override
+                public void onRemoval(RemovalNotification<String, XmlReportWithMessageIds> notification) {
+                    File file = notification.getValue().getReportFile();
+                    if (file != null) {
+                        file.delete();
+                    }
+                }
+
+            }).build();
+
 
     private EpubCheckWrapper() {}
 
@@ -47,10 +64,11 @@ public class EpubCheckWrapper {
      * @throws IOException
      */
     public static StreamSource check(File file) throws IOException {
-        XmlReportWithMessageIds report = miniCache.get(file.getAbsolutePath());
+        XmlReportWithMessageIds report = miniCache.getIfPresent(file.getAbsolutePath());
         File reportFile = null;
         if (report == null) {
             reportFile = File.createTempFile("epubcheck-report", "-for-" + file.getName() + ".xml");
+            reportFile.deleteOnExit();
             report = new XmlReportWithMessageIds(reportFile, file.getName(), EpubCheck.version());
             EpubCheck check = new EpubCheck(file, report);
             check.validate();
