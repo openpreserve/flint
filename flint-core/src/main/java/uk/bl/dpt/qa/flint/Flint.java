@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static uk.bl.dpt.qa.flint.wrappers.TikaWrapper.getMimetype;
+import uk.bl.dpt.qa.flint.wrappers.TikaWrapper;
 import static uk.bl.dpt.utils.util.FileUtil.traverse;
 
 /**
@@ -168,7 +168,7 @@ public class Flint {
 
         boolean checked = false;
 
-        String mimetype = getMimetype(pFile);
+        String mimetype = new TikaWrapper().getMimetype(pFile);
 
         List<CheckResult> results = new ArrayList<CheckResult>();
 
