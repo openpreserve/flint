@@ -38,7 +38,7 @@ public class CalibreWrapper {
     static Logger LOGGER = LoggerFactory.getLogger(CalibreWrapper.class);
 
     private static String gVersion = null;
-    private static List<String> CALIBRE_CONVERT = null;
+    private List<String> CALIBRE_CONVERT = null;
 
     /**
      * Exception for when Calibre is missing 
@@ -58,9 +58,7 @@ public class CalibreWrapper {
     /**
      * Don't allow external instantiation, follow the Singleton pattern.
      */
-    private CalibreWrapper() {}
-
-    static {
+    public CalibreWrapper() {
         // TODO: make pathToCalibre a property or a command-line arg?
         @SuppressWarnings("serial")
 		Map<String, String> osMap = new HashMap<String, String>() {{
@@ -94,7 +92,7 @@ public class CalibreWrapper {
      * Checks whether Calibre is available
      * @return true if true, false if false :-)
      */
-    public static boolean calibreIsAvailable() {
+    public boolean calibreIsAvailable() {
         return CALIBRE_CONVERT != null && "true".equalsIgnoreCase(System.getProperty("enable-calibre", "true"));
     }
 
@@ -102,7 +100,7 @@ public class CalibreWrapper {
      * Initialise the Calibre version number
      * @throws CalibreMissingException
      */
-	private static void getVer() throws CalibreMissingException {
+	private void getVer() throws CalibreMissingException {
         if (CALIBRE_CONVERT == null && !calibreIsAvailable()) {
             throw new CalibreMissingException();
         }
@@ -126,7 +124,7 @@ public class CalibreWrapper {
 	 * @return version string from Calibre
 	 * @throws CalibreMissingException in case Calibre is missing
 	 */
-	public static String getVersion() throws CalibreMissingException {
+	public String getVersion() throws CalibreMissingException {
 		if(null==gVersion) getVer();
 		return gVersion;
 	}
@@ -138,7 +136,7 @@ public class CalibreWrapper {
 	 * @return File for converted ebook (or null if error)
 	 * @throws CalibreMissingException in case Calibre is missing
 	 */
-	public static File convertEbook(File pOriginal, String pType) throws CalibreMissingException {
+	public File convertEbook(File pOriginal, String pType) throws CalibreMissingException {
         if (CALIBRE_CONVERT == null && !calibreIsAvailable()) {
             throw new CalibreMissingException();
         }
@@ -170,7 +168,7 @@ public class CalibreWrapper {
 	 * @return true if valid (i.e. can be converted to text)
 	 * @throws CalibreMissingException in case Calibre is missing
 	 */
-	public static boolean isValid(File pFile) throws CalibreMissingException {
+	public boolean isValid(File pFile) throws CalibreMissingException {
         if (CALIBRE_CONVERT == null && !calibreIsAvailable()) {
             throw new CalibreMissingException();
         }
@@ -222,7 +220,7 @@ public class CalibreWrapper {
 	 * @return true if converted ok, otherwise false
 	 * @throws CalibreMissingException in case Calibre is missing
 	 */
-	public static boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) throws CalibreMissingException {
+	public boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) throws CalibreMissingException {
 		if(pOutput.exists()&(!pOverwrite)) return false;
 		//calibre uses the target file extension to decide how to convert the file
 		//as we want text, only allow that extension

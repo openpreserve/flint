@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static uk.bl.dpt.qa.flint.wrappers.TikaWrapper.getMimetype;
+import uk.bl.dpt.qa.flint.wrappers.TikaWrapper;
 
 /**
  * A controller for the flint-fx GUI that directly runs the flint classes.
@@ -86,7 +86,7 @@ public class Controller extends CommonController {
     protected Collection<String> getAvailableFormats() {
         Collection<String> formats = null;
         try {
-             formats = Flint.getAvailableFormats(getMimetype(inputFile)).keySet();
+             formats = Flint.getAvailableFormats(new TikaWrapper().getMimetype(inputFile)).keySet();
         } catch (IllegalAccessException | InstantiationException e) {
             logger.error(e.getMessage());
             popupError(e);

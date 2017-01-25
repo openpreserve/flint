@@ -39,9 +39,10 @@ public class Wellformedness extends TimedTask {
         LinkedHashMap<String, CheckCategory> cmap = new LinkedHashMap<String, CheckCategory>();
         if (patternFilter == null || patternFilter.contains(catName) ) {
             CheckCategory cc = new CheckCategory(catName);
-            if (CalibreWrapper.calibreIsAvailable()) {
+            CalibreWrapper calibreWrapper = new CalibreWrapper();
+            if (calibreWrapper.calibreIsAvailable()) {
                 try {
-                    cc.add(new CheckCheck("isValidCalibre", CalibreWrapper.isValid(contentFile), null));
+                    cc.add(new CheckCheck("isValidCalibre", calibreWrapper.isValid(contentFile), null));
                     logger.debug(cc.get("isValidCalibre").toString());
                 } catch (Exception e) {
                     logger.error(e.getMessage());

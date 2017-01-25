@@ -51,13 +51,13 @@ public class ExiftoolWrapper {
 	 */
 	final public static String EXIFTOOL_LINUX = "/usr/bin/exiftool";//path to installed location
 	
-	private static String EXIFTOOL = null; 
+	private String EXIFTOOL = null; 
 	
-	private ExiftoolWrapper() {
+	public ExiftoolWrapper() {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static void setupExiftool() {
+	private void setupExiftool() {
 		String os = System.getProperty("os.name").toLowerCase();
 		if(os.contains("windows")) {
 			try {
@@ -105,7 +105,7 @@ public class ExiftoolWrapper {
 	 * @param pFile
 	 * @return
 	 */
-	private static File runExiftool(File pFile) {
+	private File runExiftool(File pFile) {
 		List<String> commandLine = Arrays.asList(EXIFTOOL, "-X", pFile.getAbsolutePath());
 		ToolRunner runner = new ToolRunner();
 		try {
@@ -137,7 +137,7 @@ public class ExiftoolWrapper {
 	 * @param pFile file to check
 	 * @return whether or not the file has encryption
 	 */
-	public static boolean hasDRM(File pFile) {
+	public boolean hasDRM(File pFile) {
 		if(null==EXIFTOOL) setupExiftool();
 		if(null==EXIFTOOL) {
 			//i.e. it's still null so we were unable to set up exiftool environment

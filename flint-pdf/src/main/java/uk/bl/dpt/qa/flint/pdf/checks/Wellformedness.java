@@ -62,15 +62,16 @@ public class Wellformedness extends TimedTask {
             logger.info("Adding additional well-formedness checks for {}", contentFile);
             CheckCategory cc = new CheckCategory(catName);
 
-            cc.add(new CheckCheck("isValidPDFBox", PDFBoxWrapper.isValid(contentFile), null));
+            cc.add(new CheckCheck("isValidPDFBox", new PDFBoxWrapper().isValid(contentFile), null));
             logger.debug(cc.get("isValidPDFBox").toString());
 
-            cc.add(new CheckCheck("isValid_iText", iTextWrapper.isValid(contentFile), null));
+            cc.add(new CheckCheck("isValid_iText", new iTextWrapper().isValid(contentFile), null));
             logger.debug(cc.get("isValid_iText").toString());
 
-            if (CalibreWrapper.calibreIsAvailable()) {
+            CalibreWrapper calibreWrapper = new CalibreWrapper();
+            if (calibreWrapper.calibreIsAvailable()) {
                 try {
-                    cc.add(new CheckCheck("isValid_Calibre", CalibreWrapper.isValid(contentFile), null));
+                    cc.add(new CheckCheck("isValid_Calibre", calibreWrapper.isValid(contentFile), null));
                 } catch (CalibreWrapper.CalibreMissingException e) {
                     // this shouldn't happen due to availability check
                     e.printStackTrace();
@@ -80,7 +81,7 @@ public class Wellformedness extends TimedTask {
 
             // Jhove is passing files that should not pass
             // therefore only add a result if it is negative
-            boolean jhove = Jhove1Wrapper.isValid(contentFile);
+            boolean jhove = new Jhove1Wrapper().isValid(contentFile);
             if (!jhove) {
                 cc.add(new CheckCheck("isValidJhove1", false, null));
                 logger.debug(cc.get("isValidJhove1").toString());
