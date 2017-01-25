@@ -56,9 +56,9 @@ public class PDFBoxWrapper {
 
     private static Map<String, Element> pseudoCache = new HashMap<String, Element>();
 
-    private static final XmlResultParser parser = new CachingXmlResultParser();
+    private final XmlResultParser parser = new CachingXmlResultParser();
 
-    private PDFBoxWrapper() {}
+    public PDFBoxWrapper() {}
 
     /**
      * As preflight is used more than once for different puroposes the result
@@ -66,12 +66,14 @@ public class PDFBoxWrapper {
      */
     private static class CachingXmlResultParser extends XmlResultParser {
         public Element validate (Document rdocument, DataSource source) throws IOException {
-            if (pseudoCache.containsKey(source.getName())) {
-                // can be null, which means it's not valid
-                Element preflight = pseudoCache.get(source.getName());
-                // we only cache ONCE and clear after.
-                pseudoCache.clear();
-                return preflight;
+            synchronized (this.getClass()) {
+                if (pseudoCache.containsKey(source.getName())) {
+                    // can be null, which means it's not valid
+                    Element preflight = pseudoCache.get(source.getName());
+                    // we only cache ONCE and clear after.
+                    pseudoCache.clear();
+                    return preflight;
+                }
             }
             // state that one has dealt with this file:
             pseudoCache.put(source.getName(), null);
@@ -126,7 +128,7 @@ public class PDFBoxWrapper {
      * @throws IOException
      * @throws TransformerException 
      */
-    public static ByteArrayOutputStream preflightToXml(File pFile) throws IOException, TransformerException {
+    public ByteArrayOutputStream preflightToXml(File pFile) throws IOException, TransformerException {
         Element result = parser.validate(new FileDataSource(pFile));
         LOGGER.debug("generating xml from preflight generated element for {}", pFile);
         Document doc = result.getOwnerDocument();
@@ -145,7 +147,7 @@ public class PDFBoxWrapper {
      * @param pFile file to check
      * @return true if valid, false if not
      */
-    public static boolean isValid(File pFile) {
+    public boolean isValid(File pFile) {
         try {
             if (parser.validate(new FileDataSource(pFile)) == null) {
                 return false;
@@ -164,12 +166,14 @@ public class PDFBoxWrapper {
         // if preflight passes the file then try and extract the text from the file
         // this should be more robust at finding errors than load/save but it's
         // still not ideal
-        File pTemp;
+        File pTemp = null;
         try {
             pTemp = File.createTempFile("flint-temp-", ".pdfbox.txt");
             pTemp.deleteOnExit();
         } catch (IOException e) {
             return false;
+        } finally {
+            if (pTemp != null) pTemp.delete();
         }
         return true;
         //return extractTextFromPDF(pFile, pTemp, true);
@@ -180,9 +184,10 @@ public class PDFBoxWrapper {
 	 * @param pFile PDF file to load
 	 * @return whether the file loads and saves successfully or not
 	 */
-	public static boolean loadSavePDF(File pFile) {
+	public boolean loadSavePDF(File pFile) {
 		boolean ret = false;
 
+		File temp = null;
 		try {
 
 			// Note that this test passes files that fail to open in Acrobat
@@ -191,7 +196,7 @@ public class PDFBoxWrapper {
 
 			PDFParser parser = new PDFParser(new FileInputStream(pFile));
 			parser.parse();
-			File temp = File.createTempFile("flint-temp-"+pFile.getName()+"-", ".pdf");
+			temp = File.createTempFile("flint-temp-"+pFile.getName()+"-", ".pdf");
 			parser.getPDDocument().save(temp);
 			parser.getDocument().close();
 			temp.deleteOnExit();
@@ -202,6 +207,8 @@ public class PDFBoxWrapper {
 			// PDFBox state that these files have errors and their parser is correct
 			// The only way to find out that the parser doesn't like it is to catch
 			// a general Exception.
+		} finally {
+		    if (temp != null) temp.delete();
 		}
 		return ret;
 	}
@@ -211,13 +218,15 @@ public class PDFBoxWrapper {
 	 * @param pFile file to check
 	 * @return whether the file is had DRM or not
 	 */
-	public static boolean hasDRM(File pFile) {
+	public boolean hasDRM(File pFile) {
 		boolean ret = false;
+		
+		File tmp = null;
 		try {
 			System.setProperty("org.apache.pdfbox.baseParser.pushBackSize", "1024768");
 			// NOTE: we use loadNonSeq here as it is the latest parser
 			// load() and parser.parse() have hung on test files
-			File tmp = File.createTempFile("flint-", ".tmp");
+			tmp = File.createTempFile("flint-", ".tmp");
 			tmp.deleteOnExit();
 			RandomAccess scratchFile = new RandomAccessFile(tmp, "rw");
 			PDDocument doc = PDDocument.loadNonSeq(new FileInputStream(pFile), scratchFile);
@@ -245,6 +254,8 @@ public class PDFBoxWrapper {
 			// DRM or not.  Return false and hope it is detected elsewhere.
 
 			ret = false;
+		} finally {
+		    if (tmp != null) tmp.delete();
 		}
 		return ret;
 	}
@@ -255,15 +266,16 @@ public class PDFBoxWrapper {
 	 * @param pPDF pdf file to check
 	 * @return whether or not the file has DRM
 	 */
-	public static boolean hasDRMGranular(File pPDF) {
+	public boolean hasDRMGranular(File pPDF) {
 
 		boolean ret = false;
 
+		File tmp = null;
 		try {
 			System.setProperty("org.apache.pdfbox.baseParser.pushBackSize", "1024768");
 			// NOTE: we use loadNonSeq here as it is the latest parser
 			// load() and parser.parse() have hung on test files
-			File tmp = File.createTempFile("flint-", ".tmp");
+			tmp = File.createTempFile("flint-", ".tmp");
 			tmp.deleteOnExit();
 			RandomAccess scratchFile = new RandomAccessFile(tmp, "rw");
 			PDDocument doc = PDDocument.loadNonSeq(new FileInputStream(pPDF), scratchFile);
@@ -309,6 +321,8 @@ public class PDFBoxWrapper {
 
 		} catch (Exception e) {
            LOGGER.warn("Exception while doing granular DRM checks leads to invalidity: {}", e);
+		} finally {
+		    if (tmp != null) tmp.delete();
 		}
 
 		return ret;
@@ -323,7 +337,7 @@ public class PDFBoxWrapper {
 	 * @param pOverwrite whether or not to overwrite an existing output file
 	 * @return true if converted ok, otherwise false
 	 */
-	public static boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) {
+	public boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) {
 		if(pOutput.exists()&(!pOverwrite)) return false;
         PDDocument doc = null;
         PrintWriter out = null;

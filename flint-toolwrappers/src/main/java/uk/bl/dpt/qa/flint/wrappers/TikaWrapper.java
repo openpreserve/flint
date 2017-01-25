@@ -33,9 +33,9 @@ import org.apache.tika.mime.MediaType;
  */
 public class TikaWrapper {
 
-	private static final DefaultDetector detector = new DefaultDetector();
+	private final DefaultDetector detector = new DefaultDetector();
 
-	private TikaWrapper() {
+	public TikaWrapper() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -44,7 +44,7 @@ public class TikaWrapper {
 	 * @param pFile file to check
 	 * @return the mimetype of the file
 	 */
-	public static String getMimetype(File pFile) {
+	public String getMimetype(File pFile) {
 			try {
 				return getMimetype(TikaInputStream.get(pFile));
 			} catch (FileNotFoundException e) {
@@ -63,7 +63,7 @@ public class TikaWrapper {
 	 * @return mimetype
 	 * @throws IOException on error
 	 */
-	public static String getMimetype(InputStream pInput) throws IOException {
+	public String getMimetype(InputStream pInput) throws IOException {
 		String type = null;
 
 		try {

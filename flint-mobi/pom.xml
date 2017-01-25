@@ -7,7 +7,7 @@
         <version>0.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>flint-pdf</artifactId>
+    <artifactId>flint-mobi</artifactId>
 
     <dependencies>
 
@@ -15,21 +15,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>flint-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>flint-hadoop-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>Saxon-HE</artifactId>
-            <version>9.5.1-8</version>
         </dependency>
 
         <!-- testing -->

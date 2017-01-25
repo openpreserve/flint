@@ -38,46 +38,48 @@ public class Jhove1Wrapper {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Jhove1Wrapper.class);
 
-    private static JhoveBase jhove = null;
-    private static App app = null;
-    private static XmlHandler handler = null;
-
-    static {
+    private JhoveBase jhove = null;
+    private App app = null;
+    private XmlHandler handler = null;
+	
+	public Jhove1Wrapper() {
         //CONFIG_FILE_PATH = Jhove1Wrapper.class.getResource("/jhove.conf").getPath();
         //LOGGER.warn("JHOVE CONFIG EXISTS at {}?: {}", CONFIG_FILE_PATH, new File(CONFIG_FILE_PATH).exists());
         //http://www.garymcgath.com/jhovenote.html
-		//and https://github.com/openplanets/planets-suite/blob/59d1517b5493815a0f59927d6c97ca5462d1ed8d/services/jhove/src/main/java/eu/planets_project/ifr/core/services/identification/jhove/impl/JhoveIdentification.java
-		try {
-			jhove = new JhoveBase();
-		} catch (JhoveException e1) {
-			LOGGER.warn("Caught exception: {}", e1);
-		}
-		app = new App(JhoveBase._name, JhoveBase._release, JhoveBase.DATE, "", "");
-		handler = new XmlHandler();
-		//try {
-		//	jhove.init();
-		//} catch (JhoveException e) {
-		//	LOGGER.warn("Caught exception: {}", e);
-		//}
-		jhove.setEncoding("utf-8");
-		jhove.setTempDirectory(System.getProperty("java.io.tmpdir"));
-		jhove.setBufferSize(4096);
-		jhove.setChecksumFlag(false);
-		jhove.setShowRawFlag(false);
-		jhove.setSignatureFlag(false);
-    }
-	
-	private Jhove1Wrapper() {}
+        //and https://github.com/openplanets/planets-suite/blob/59d1517b5493815a0f59927d6c97ca5462d1ed8d/services/jhove/src/main/java/eu/planets_project/ifr/core/services/identification/jhove/impl/JhoveIdentification.java
+        try {
+            jhove = new JhoveBase();
+        } catch (JhoveException e1) {
+            LOGGER.warn("Caught exception: {}", e1);
+        }
+        app = new App(JhoveBase._name, JhoveBase._release, JhoveBase.DATE, "", "");
+        handler = new XmlHandler();
+        //try {
+        //  jhove.init();
+        //} catch (JhoveException e) {
+        //  LOGGER.warn("Caught exception: {}", e);
+        //}
+        jhove.setEncoding("utf-8");
+        jhove.setTempDirectory(System.getProperty("java.io.tmpdir"));
+        jhove.setBufferSize(4096);
+        jhove.setChecksumFlag(false);
+        jhove.setShowRawFlag(false);
+        jhove.setSignatureFlag(false);
+	}
 
 	/**
 	 * Queries Jhove to see whether a file is valid/well-formed or not
 	 * @param pFile file to check
 	 * @return true/false if Jhove thinks it's valid
 	 */
-	public static boolean isValid(File pFile) {
+	public boolean isValid(File pFile) {
 		boolean ret = false;
+		
+		File temp = null;
 		try {
-			File temp = File.createTempFile("jhove-output-", ".xml");
+		    LOGGER.warn("jhove staring");
+			temp = File.createTempFile("jhove-output-", ".xml");
+
 			String[] inputs = new String[] { pFile.getAbsolutePath() };
 			jhove.dispatch(app, null, null, handler, temp.getAbsolutePath(), inputs);
 			
@@ -94,10 +96,10 @@ public class Jhove1Wrapper {
 				//System.out.println(temp.getAbsolutePath()+": "+status+", "+status.length());
 			}
             LOGGER.warn("jhove thinks it is: {}", status.toLowerCase());
-			temp.delete();
-
 		} catch (Exception e) {
 			LOGGER.warn("Caught exception: {}", e);
+		} finally {
+		    if (temp != null) temp.delete();
 		}
 
 		return ret;

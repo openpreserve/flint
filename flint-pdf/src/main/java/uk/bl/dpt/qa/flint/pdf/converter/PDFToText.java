@@ -40,13 +40,13 @@ public class PDFToText {
 		boolean ret = false;
 		if(!pOriginal.exists()) return false;
 		//test to see if the file is actually a pdf
-		if(TikaWrapper.getMimetype(pOriginal).toLowerCase().contains("pdf")) {
+		if(new TikaWrapper().getMimetype(pOriginal).toLowerCase().contains("pdf")) {
 			//extract text
-			ret = PDFBoxWrapper.extractTextFromPDF(pOriginal, pText, true);
+			ret = new PDFBoxWrapper().extractTextFromPDF(pOriginal, pText, true);
 			
 			if(!ret) {
 				//try and extract text using iText as PDFBox encountered an error
-				ret = iTextWrapper.extractTextFromPDF(pOriginal, pText, true);
+				ret = new iTextWrapper().extractTextFromPDF(pOriginal, pText, true);
 			}
 			
 		}

@@ -57,7 +57,7 @@ public class PolicyValidation extends TimedTask {
     @Override
     public LinkedHashMap<String, CheckCategory> call() throws Exception {
         logger.info("Performing a policy validation on {}", contentFile);
-        ByteArrayOutputStream outputXml = PDFBoxWrapper.preflightToXml(contentFile);
+        ByteArrayOutputStream outputXml = new PDFBoxWrapper().preflightToXml(contentFile);
         return PolicyAware.policyValidationResult(new StreamSource(new ByteArrayInputStream(outputXml.toByteArray())),
                 new StreamSource(PDFFormat.getPolicyStatically()), patternFilter);
     }
