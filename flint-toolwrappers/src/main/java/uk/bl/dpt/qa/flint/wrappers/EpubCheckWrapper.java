@@ -36,9 +36,9 @@ public class EpubCheckWrapper {
 
     static Logger LOGGER = LoggerFactory.getLogger(EpubCheckWrapper.class);
 
-    private static Map<String, Report> miniCache = new HashMap<String, Report>();
+    private Map<String, Report> miniCache = new HashMap<String, Report>();
 
-    private EpubCheckWrapper() {}
+    public EpubCheckWrapper() {}
 
     /**
      * Check an epub file against a XmlReportWithMessageIds policy
@@ -46,7 +46,7 @@ public class EpubCheckWrapper {
      * @return StreamSource of output report
      * @throws IOException
      */
-    public static StreamSource check(File file) throws IOException {
+    public StreamSource check(File file) throws IOException {
         Report report = miniCache.get(file.getAbsolutePath());
         File reportFile = null;
         if (report == null) {

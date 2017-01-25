@@ -70,7 +70,7 @@
         <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
         <maven-war-plugin.version>2.4</maven-war-plugin.version>
         <mrunit.version>1.0.0</mrunit.version>
-        <pdfbox.version>1.8.6</pdfbox.version>
+        <pdfbox.version>1.8.8</pdfbox.version>
         <reflections.version>0.9.9-RC1</reflections.version>
         <slf4j.version>1.7.6</slf4j.version>
         <tika-parsers.version>1.4</tika-parsers.version>

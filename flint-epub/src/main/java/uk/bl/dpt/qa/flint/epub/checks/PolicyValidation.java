@@ -38,7 +38,7 @@ public class PolicyValidation extends TimedTask {
     @Override
     public LinkedHashMap<String, CheckCategory> call() throws Exception {
         logger.info("Performing a policy validation on {}", contentFile);
-        StreamSource outputXml = EpubCheckWrapper.check(contentFile);
+        StreamSource outputXml = new EpubCheckWrapper().check(contentFile);
         return PolicyAware.policyValidationResult(outputXml,
                 new StreamSource(EPUBFormat.getPolicyStatically()), patternFilter);
     }

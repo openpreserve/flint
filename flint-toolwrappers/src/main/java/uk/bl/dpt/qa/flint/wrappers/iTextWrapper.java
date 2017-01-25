@@ -42,7 +42,7 @@ public class iTextWrapper {
 
     private static Logger LOGGER = LoggerFactory.getLogger(iTextWrapper.class);
 
-    private iTextWrapper() {}
+    public iTextWrapper() {}
 
     /**
      * Extracts text from a PDF.
@@ -51,7 +51,7 @@ public class iTextWrapper {
      * @param pOverwrite whether or not to overwrite an existing output file
      * @return true if converted ok, otherwise false
      */
-    public static boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) {
+    public boolean extractTextFromPDF(File pFile, File pOutput, boolean pOverwrite) {
         if(pOutput.exists()&(!pOverwrite)) return false;
 
         boolean ret = true;
@@ -93,7 +93,7 @@ public class iTextWrapper {
      * @param pFile file to check
      * @return whether the file is valid or not
      */
-    public static boolean isValid(File pFile) {
+    public boolean isValid(File pFile) {
 
         boolean ret = false;
 
@@ -126,7 +126,7 @@ public class iTextWrapper {
      * @param pFile file to check
      * @return whether the file is had DRM or not
      */
-    public static boolean hasDRM(File pFile) {
+    public boolean hasDRM(File pFile) {
 
         boolean drm = false;
 

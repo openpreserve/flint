@@ -57,15 +57,17 @@ public class SpecificDrmChecks extends TimedTask {
     public LinkedHashMap<String, CheckCategory> call() throws Exception {
         LinkedHashMap<String, CheckCategory> cmap = new LinkedHashMap<String, CheckCategory>();
         if (patternFilter == null || patternFilter.contains(FixedCategories.NO_DRM.toString()) ) {
+            PDFBoxWrapper pdfBoxWrapper = new PDFBoxWrapper();
+            
             logger.info("Adding specific DRM checks for {} to check-result", contentFile);
             CheckCategory cc = new CheckCategory(FixedCategories.NO_DRM.toString());
-            cc.add(new CheckCheck("checkDRMPDFBoxAbsolute", !PDFBoxWrapper.hasDRM(contentFile), null));
+            cc.add(new CheckCheck("checkDRMPDFBoxAbsolute", !pdfBoxWrapper.hasDRM(contentFile), null));
             logger.debug(cc.get("checkDRMPDFBoxAbsolute").toString());
-            cc.add(new CheckCheck("checkDRMPDFBoxGranular", !PDFBoxWrapper.hasDRMGranular(contentFile), null));
+            cc.add(new CheckCheck("checkDRMPDFBoxGranular", !pdfBoxWrapper.hasDRMGranular(contentFile), null));
             logger.debug(cc.get("checkDRMPDFBoxGranular").toString());
             cc.add(new CheckCheck("checkDRMNaiive", !checkDRMNaiive(contentFile), null));
             logger.debug(cc.get("checkDRMNaiive").toString());
-            cc.add(new CheckCheck("checkDRM_iText", !iTextWrapper.hasDRM(contentFile), null));
+            cc.add(new CheckCheck("checkDRM_iText", !new iTextWrapper().hasDRM(contentFile), null));
             logger.debug(cc.get("checkDRM_iText").toString());
             cmap.put(cc.getName(), cc);
         }

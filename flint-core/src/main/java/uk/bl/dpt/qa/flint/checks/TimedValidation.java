@@ -38,8 +38,6 @@ public class TimedValidation {
 
     private static Logger LOGGER = LoggerFactory.getLogger(TimedValidation.class);
 
-    protected static ExecutorService executor;
-
     private TimedValidation(){}
 
     /**
@@ -49,7 +47,7 @@ public class TimedValidation {
      * @return output from the TimedTask
      */
     public static LinkedHashMap<String, CheckCategory> validate(TimedTask task, File contentFile) {
-        executor = Executors.newSingleThreadExecutor();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         task.setContentFile(contentFile);
         LinkedHashMap<String, CheckCategory> cMap = new LinkedHashMap<String, CheckCategory>();
         Future<LinkedHashMap<String, CheckCategory>> future = executor.submit(task);
